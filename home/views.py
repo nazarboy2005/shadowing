@@ -7,4 +7,4 @@ class HomePageView(TemplateView):
 
 
 class PriceList(TemplateView):
-    template_name = 'profile.html'
+    template_name = 'price_list.html'

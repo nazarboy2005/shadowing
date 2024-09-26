@@ -128,7 +128,7 @@ def logout_view(request):
         return redirect('pages:home')
 
 
-class ProfileView(LoginRequiredMixin, UpdateView):
+class ProfileView(UpdateView): #LoginRequiredMixin
     template_name = 'profile.html'
     form_class = AccountModelForm
     success_url = reverse_lazy('users:profile')
@@ -145,5 +145,8 @@ class BillingsView(TemplateView):
 
 
 
-class FlashCards(TemplateView):
+class FlashCardsView(TemplateView):
     template_name = 'flashcard.html'
+
+class WordsView(TemplateView):
+    template_name = 'words.html'

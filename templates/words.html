@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards - Master Vocabulary</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #f6f8fa 0%, #e9ecef 100%);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased">
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold">Flashcards</div>
+            <ul class="flex space-x-8">
+                <li><a href="#word-bank" class="hover:text-gray-600 transition duration-300">Word Bank</a></li>
+                <li><a href="#add-word" class="hover:text-gray-600 transition duration-300">Add Word</a></li>
+                <li><a href="#learn" class="hover:text-gray-600 transition duration-300">Learn</a></li>
+                <li><a href="#review" class="hover:text-gray-600 transition duration-300">Review</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="mt-16 pt-16">
+        <!-- Word Bank Section -->
+        <section id="word-bank" class="py-20 bg-gray-100 hidden">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12">Your Word Bank</h2>
+                <div id="word-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            </div>
+        </section>
+
+        <!-- Add Word Section -->
+        <section id="add-word" class="py-20 gradient-bg hidden">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12">Add a New Word</h2>
+                <div class="max-w-md mx-auto">
+                    <form id="add-word-form" class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="mb-4">
+                            <label for="word" class="block text-sm font-medium text-gray-700">Word</label>
+                            <input type="text" id="word" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-gray-400" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="definition" class="block text-sm font-medium text-gray-700">Definition</label>
+                            <textarea id="definition" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-gray-400" required></textarea>
+                        </div>
+                        <button type="submit" class="bg-black text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-gray-800 transition duration-300">Add Word</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learn Section -->
+        <section id="learn" class="py-20 hidden">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12">Learn New Words</h2>
+                <div class="max-w-sm mx-auto mb-6">
+                    <label for="learn-count" class="block text-sm font-medium text-gray-700">How many words do you want to learn?</label>
+                    <input type="number" id="learn-count" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-gray-400" min="1" required>
+                    <button id="learn-start" class="mt-4 bg-black text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-gray-800 transition duration-300">Start Learning</button>
+                </div>
+                <div id="learn-word-container" class="text-center hidden">
+                    <h3 id="learn-word" class="text-2xl font-bold mb-4"></h3>
+                    <p id="learn-definition" class="text-lg mb-6"></p>
+                    <div class="flex justify-center space-x-4">
+                        <button id="btn-1min" class="bg-gray-300 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-400 transition duration-300">1 Min</button>
+                        <button id="btn-5min" class="bg-gray-300 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-400 transition duration-300">5 Min</button>
+                        <button id="btn-1day" class="bg-gray-300 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-400 transition duration-300">1 Day</button>
+                        <button id="btn-3days" class="bg-gray-300 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-400 transition duration-300">3 Days</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Review Section -->
+        <section id="review" class="py-20 bg-gray-100 hidden">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12">Review Your Words</h2>
+                <div id="review-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Words to review will be dynamically added here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-100 py-8">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-600">
+            <p>© 2024 Flashcards. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let words = [];
+        let reviewWords = [];
+        let currentLearnIndex = 0;
+        let learnWordCount = 0;
+
+        // Navigation and toggle sections
+        function toggleSection(sectionId) {
+            document.querySelectorAll('section').forEach(section => section.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // Navigation event listeners
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = link.getAttribute('href').substring(1);
+                toggleSection(sectionId);
+                if (sectionId === 'word-bank') loadWords();
+                if (sectionId === 'review') loadReviewWords();
+            });
+        });
+
+        // Add a new word
+        document.getElementById('add-word-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const word = document.getElementById('word').value;
+            const definition = document.getElementById('definition').value;
+            words.push({ word, definition, learned: false });
+            document.getElementById('word').value = '';
+            document.getElementById('definition').value = '';
+            alert('Word added successfully!');
+        });
+
+        // Load Word Bank
+        function loadWords() {
+            const wordList = document.getElementById('word-list');
+            wordList.innerHTML = '';
+            words.forEach((wordObj, index) => {
+                const wordDiv = document.createElement('div');
+                wordDiv.classList.add('bg-white', 'p-6', 'rounded-lg', 'shadow-md');
+                wordDiv.innerHTML = `
+                    <h3 class="text-xl font-bold mb-2">${wordObj.word}</h3>
+                    <p>${wordObj.definition}</p>
+                    <button class="mt-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-600 transition duration-300" onclick="markLearned(${index})">Mark as Learned</button>
+                `;
+                wordList.appendChild(wordDiv);
+            });
+        }
+
+        // Load learn words one by one
+        function loadLearnWords(count) {
+            learnWordCount = count;
+            currentLearnIndex = 0;
+            document.getElementById('learn-word-container').classList.remove('hidden');
+            showNextLearnWord();
+        }
+
+        function showNextLearnWord() {
+            if (currentLearnIndex < learnWordCount && currentLearnIndex < words.length) {
+                const wordObj = words[currentLearnIndex];
+                document.getElementById('learn-word').textContent = wordObj.word;
+                document.getElementById('learn-definition').textContent = wordObj.definition;
+            } else {
+                alert('You have finished learning the selected words.');
+                document.getElementById('learn-word-container').classList.add('hidden');
+            }
+        }
+
+        // Reschedule a word based on time interval and show next word
+        function rescheduleWord(timeInMinutes) {
+            const wordObj = words[currentLearnIndex];
+            if (timeInMinutes >= 1440) {
+                // Move to review section for 1 day and 3 day intervals
+                wordObj.learned = true;
+                reviewWords.push(wordObj);
+            } else {
+                // Reschedule for review in minutes
+                setTimeout(() => {
+                    // Show the word again after the specified time
+                    currentLearnIndex--;
+                    showNextLearnWord();
+                }, timeInMinutes * 60 * 1000);
+            }
+            currentLearnIndex++;
+            showNextLearnWord();
+        }
+
+        // Add event listeners for time interval buttons
+        document.getElementById('btn-1min').addEventListener('click', () => rescheduleWord(1));
+        document.getElementById('btn-5min').addEventListener('click', () => rescheduleWord(5));
+        document.getElementById('btn-1day').addEventListener('click', () => rescheduleWord(1440));
+        document.getElementById('btn-3days').addEventListener('click', () => rescheduleWord(4320));
+
+        // Load words to review
+        function loadReviewWords() {
+            const reviewList = document.getElementById('review-list');
+            reviewList.innerHTML = '';
+            reviewWords.forEach((wordObj) => {
+                const wordDiv = document.createElement('div');
+                wordDiv.classList.add('bg-white', 'p-6', 'rounded-lg', 'shadow-md');
+                wordDiv.innerHTML = `
+                    <h3 class="text-xl font-bold mb-2">${wordObj.word}</h3>
+                    <p>${wordObj.definition}</p>
+                `;
+                reviewList.appendChild(wordDiv);
+            });
+        }
+
+        // Event listener for Learn start button
+        document.getElementById('learn-start').addEventListener('click', function() {
+            const count = parseInt(document.getElementById('learn-count').value);
+            loadLearnWords(count);
+        });
+
+        // Mark word as learned
+        function markLearned(index) {
+            words[index].learned = true;
+            alert('Word marked as learned!');
+        }
+
+        // Default view is Word Bank
+        toggleSection('word-bank');
+    </script>
+</body>
+</html>
