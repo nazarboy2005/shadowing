@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Shadowing</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #f6f8fa 0%, #e9ecef 100%);
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased gradient-bg">
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold">Shadowing</div>
+            <a href="index.html" class="text-sm font-semibold hover:text-gray-600 transition duration-300">Back to Home</a>
+        </nav>
+    </header>
+
+    <main class="mt-16 pt-16">
+        <section class="container mx-auto px-6 py-16">
+            <h1 class="text-3xl font-bold text-center mb-12">Your Profile</h1>
+
+            <!-- Profile Card -->
+            <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8">
+                <div class="flex items-center space-x-8 mb-8">
+                    <img class="h-24 w-24 rounded-full border border-gray-200 object-cover" src="https://via.placeholder.com/150" alt="Profile Picture">
+                    <div>
+                        <h2 class="text-2xl font-bold">John Doe</h2>
+                        <p class="text-gray-600">johndoe@example.com</p>
+                    </div>
+                    <a href="#" class="ml-auto bg-black text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-800 transition duration-300">Edit Profile</a>
+                </div>
+
+                <!-- Account Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Account Information</h3>
+                        <ul class="space-y-4 text-gray-600">
+                            <li><strong>Full Name:</strong> John Doe</li>
+                            <li><strong>Email:</strong> johndoe@example.com</li>
+                            <li><strong>Subscription:</strong> Monthly Plan - $12/month</li>
+                            <li><strong>Member Since:</strong> January 2024</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Settings</h3>
+                        <ul class="space-y-4 text-gray-600">
+                            <li><a href="#" class="text-black hover:underline">Change Password</a></li>
+                            <li><a href="#" class="text-black hover:underline">Update Payment Method</a></li>
+                            <li><a href="#" class="text-black hover:underline">Manage Subscription</a></li>
+                            <li><a href="#" class="text-red-500 hover:underline">Cancel Subscription</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Progress Summary -->
+                <div class="mt-12">
+                    <h3 class="text-xl font-bold mb-4">Your Learning Progress</h3>
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-inner">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                            <div>
+                                <h4 class="text-2xl font-bold">34</h4>
+                                <p class="text-gray-600">Total Sessions</p>
+                            </div>
+                            <div>
+                                <h4 class="text-2xl font-bold">75%</h4>
+                                <p class="text-gray-600">Pronunciation Accuracy</p>
+                            </div>
+                            <div>
+                                <h4 class="text-2xl font-bold">24 hrs</h4>
+                                <p class="text-gray-600">Total Time Spent</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Recordings Section -->
+                <div class="mt-12">
+                    <h3 class="text-xl font-bold mb-4">My Recordings</h3>
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-inner">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <!-- Recording 1 -->
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h4 class="text-lg font-semibold mb-2">Session 1 - Pronunciation Practice</h4>
+                                <p class="text-sm text-gray-600 mb-4">Date: August 10, 2024</p>
+                                <audio controls class="w-full mb-4">
+                                    <source src="recording1.mp3" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <div class="flex justify-between items-center">
+                                    <a href="#" class="text-sm text-red-500 hover:underline">Delete</a>
+                                    <a href="#" class="text-sm text-blue-500 hover:underline">Download</a>
+                                </div>
+                            </div>
+
+                            <!-- Recording 2 -->
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h4 class="text-lg font-semibold mb-2">Session 2 - Fluency Training</h4>
+                                <p class="text-sm text-gray-600 mb-4">Date: September 2, 2024</p>
+                                <audio controls class="w-full mb-4">
+                                    <source src="recording2.mp3" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <div class="flex justify-between items-center">
+                                    <a href="#" class="text-sm text-red-500 hover:underline">Delete</a>
+                                    <a href="#" class="text-sm text-blue-500 hover:underline">Download</a>
+                                </div>
+                            </div>
+
+                            <!-- Recording 3 -->
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h4 class="text-lg font-semibold mb-2">Session 3 - Accent Training</h4>
+                                <p class="text-sm text-gray-600 mb-4">Date: September 15, 2024</p>
+                                <audio controls class="w-full mb-4">
+                                    <source src="recording3.mp3" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <div class="flex justify-between items-center">
+                                    <a href="#" class="text-sm text-red-500 hover:underline">Delete</a>
+                                    <a href="#" class="text-sm text-blue-500 hover:underline">Download</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Load More Button -->
+                        <div class="text-center mt-6">
+                            <a href="#" class="text-sm font-semibold text-blue-500 hover:underline">View More Recordings</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-100 py-8">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-600">
+            <p>© 2024 Shadowing. All rights reserved.</p>
+            <div class="mt-2">
+                <a href="#" class="hover:text-gray-900 mr-4">Privacy Policy</a>
+                <a href="#" class="hover:text-gray-900">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
