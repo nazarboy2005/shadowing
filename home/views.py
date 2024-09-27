@@ -8,3 +8,8 @@ class HomePageView(TemplateView):
 
 class PriceList(TemplateView):
     template_name = 'price_list.html'
+
+
+
+class PracticeView(TemplateView):
+    template_name = 'practice.html'

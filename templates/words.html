@@ -3,221 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flashcards - Master Vocabulary</title>
+    <title>Shadowing - Master English Pronunciation and Fluency</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         .gradient-bg {
             background: linear-gradient(135deg, #f6f8fa 0%, #e9ecef 100%);
         }
-        .hidden {
+        body {
+            transition: background-color 0.3s;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7);
             display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .exit-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            color: #e53e3e;
+            cursor: pointer;
+        }
+        .word-card {
+            transition: transform 0.5s;
+            perspective: 1000px;
+            width: 200px;
+            height: 120px;
+            display: inline-block;
+            margin: 10px;
+        }
+        .word-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        .word-card-inner:hover {
+            transform: rotateY(180deg);
+        }
+        .word-card-front, .word-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .word-card-front {
+            background-color: #f9f9f9;
+        }
+        .word-card-back {
+            transform: rotateY(180deg);
+            background-color: #f0f0f0;
+        }
+        .word-definition, .word-example {
+            text-align: left;
+            width: 100%;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+        .word-definition strong, .word-example strong {
+            color: #2b6cb0;
+        }
+        .word-bank-container {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .button {
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            opacity: 0.8;
+        }
+        .button-blue {
+            background-color: #3182ce;
+            color: white;
+        }
+        .button-blue:hover {
+            background-color: #2b6cb0;
+        }
+        .button-green {
+            background-color: #48bb78;
+            color: white;
+        }
+        .button-green:hover {
+            background-color: #38a169;
+        }
+        .button-red {
+            background-color: #e53e3e;
+            color: white;
+        }
+        .button-red:hover {
+            background-color: #c53030;
+        }
+        .button-black {
+            background-color: #000;
+            color: white;
+        }
+        .button-black:hover {
+            background-color: #333;
+        }
+        header {
+            transition: background-color 0.3s;
+        }
+        .icon-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+        }
+        .icon-button:hover {
+            color: #3182ce;
         }
     </style>
 </head>
-<body class="font-sans text-gray-800 antialiased">
-    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold">Flashcards</div>
-            <ul class="flex space-x-8">
-                <li><a href="#word-bank" class="hover:text-gray-600 transition duration-300">Word Bank</a></li>
-                <li><a href="#add-word" class="hover:text-gray-600 transition duration-300">Add Word</a></li>
-                <li><a href="#learn" class="hover:text-gray-600 transition duration-300">Learn</a></li>
-                <li><a href="#review" class="hover:text-gray-600 transition duration-300">Review</a></li>
-            </ul>
-        </nav>
-    </header>
+<body class="font-sans gradient-bg">
 
-    <main class="mt-16 pt-16">
-        <!-- Word Bank Section -->
-        <section id="word-bank" class="py-20 bg-gray-100 hidden">
-            <div class="container mx-auto px-6">
-                <h2 class="text-3xl font-bold text-center mb-12">Your Word Bank</h2>
-                <div id="word-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+<header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
+    <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="text-2xl font-bold">Shadowing</div>
+        <ul class="flex space-x-8">
+            <li><a href="#features" class="hover:text-gray-600 transition duration-300">Features</a></li>
+            <li><a href="#how-it-works" class="hover:text-gray-600 transition duration-300">How It Works</a></li>
+            <li><a href="#pricing" class="hover:text-gray-600 transition duration-300">Pricing</a></li>
+            <li><a href="#effectiveness" class="hover:text-gray-600 transition duration-300">Effectiveness</a></li>
+        </ul>
+        <a href="#get-started" class="bg-black text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-gray-800 transition duration-300">Get Started</a>
+    </nav>
+</header>
+
+<div class="container mx-auto px-4 py-8 mt-24">
+    <h1 class="text-4xl font-bold mb-6 text-center">Word Bank</h1>
+
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold">Add or Edit a Word</h2>
+        <form id="add-word-form" class="bg-white p-4 rounded-lg shadow-md">
+            <div class="mb-4">
+                <label for="word" class="block font-bold mb-2">Word:</label>
+                <input type="text" id="word" class="w-full border rounded px-4 py-2" required>
             </div>
-        </section>
-
-        <!-- Add Word Section -->
-        <section id="add-word" class="py-20 gradient-bg hidden">
-            <div class="container mx-auto px-6">
-                <h2 class="text-3xl font-bold text-center mb-12">Add a New Word</h2>
-                <div class="max-w-md mx-auto">
-                    <form id="add-word-form" class="bg-white p-6 rounded-lg shadow-md">
-                        <div class="mb-4">
-                            <label for="word" class="block text-sm font-medium text-gray-700">Word</label>
-                            <input type="text" id="word" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-gray-400" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="definition" class="block text-sm font-medium text-gray-700">Definition</label>
-                            <textarea id="definition" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-gray-400" required></textarea>
-                        </div>
-                        <button type="submit" class="bg-black text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-gray-800 transition duration-300">Add Word</button>
-                    </form>
-                </div>
+            <div class="mb-4">
+                <label for="definition" class="block font-bold mb-2">Definition:</label>
+                <input type="text" id="definition" class="w-full border rounded px-4 py-2" required>
             </div>
-        </section>
+            <div class="mb-4">
+                <label for="example" class="block font-bold mb-2">Example:</label>
+                <input type="text" id="example" class="w-full border rounded px-4 py-2" required>
+            </div>
+            <button type="submit" class="button button-black">Save Word</button>
+        </form>
+    </div>
 
-        <!-- Learn Section -->
-        <section id="learn" class="py-20 hidden">
-            <div class="container mx-auto px-6">
-                <h2 class="text-3xl font-bold text-center mb-12">Learn New Words</h2>
-                <div class="max-w-sm mx-auto mb-6">
-                    <label for="learn-count" class="block text-sm font-medium text-gray-700">How many words do you want to learn?</label>
-                    <input type="number" id="learn-count" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-gray-400" min="1" required>
-                    <button id="learn-start" class="mt-4 bg-black text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-gray-800 transition duration-300">Start Learning</button>
-                </div>
-                <div id="learn-word-container" class="text-center hidden">
-                    <h3 id="learn-word" class="text-2xl font-bold mb-4"></h3>
-                    <p id="learn-definition" class="text-lg mb-6"></p>
-                    <div class="flex justify-center space-x-4">
-                        <button id="btn-1min" class="bg-gray-300 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-400 transition duration-300">1 Min</button>
-                        <button id="btn-5min" class="bg-gray-300 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-400 transition duration-300">5 Min</button>
-                        <button id="btn-1day" class="bg-gray-300 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-400 transition duration-300">1 Day</button>
-                        <button id="btn-3days" class="bg-gray-300 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-400 transition duration-300">3 Days</button>
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold">Word Bank</h2>
+        <div id="word-list" class="word-bank-container bg-white p-4 rounded-lg shadow-md"></div>
+    </div>
+
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold">Learn Words</h2>
+        <button onclick="startLearning()" class="button button-blue">Start Learning</button>
+    </div>
+
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold">Review Words</h2>
+        <div id="review-list" class="bg-white p-4 rounded-lg shadow-md"></div>
+    </div>
+</div>
+
+<!-- Learning Modal -->
+<div id="learning-modal" class="modal">
+    <div id="modal-content" class="modal-content">
+        <button class="exit-button" onclick="exitLearning()">✖</button>
+        <h3 id="learn-word" class="text-xl font-bold"></h3>
+        <p id="learn-definition" class="word-definition"></p>
+        <p id="learn-example" class="word-example"></p>
+        <button onclick="playPronunciation()" class="button button-blue">Pronounce</button>
+        <button onclick="markLearned()" class="button button-green">Learned</button>
+        <button onclick="skipWord()" class="button button-red">I Don't Know</button>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="edit-modal" class="modal">
+    <div class="modal-content">
+        <h2 class="text-2xl font-bold">Edit Word</h2>
+        <form id="edit-word-form">
+            <div class="mb-4">
+                <label for="edit-word" class="block font-bold mb-2">Word:</label>
+                <input type="text" id="edit-word" class="w-full border rounded px-4 py-2" required>
+            </div>
+            <div class="mb-4">
+                <label for="edit-definition" class="block font-bold mb-2">Definition:</label>
+                <input type="text" id="edit-definition" class="w-full border rounded px-4 py-2" required>
+            </div>
+            <div class="mb-4">
+                <label for="edit-example" class="block font-bold mb-2">Example:</label>
+                <input type="text" id="edit-example" class="w-full border rounded px-4 py-2" required>
+            </div>
+            <button type="submit" class="button button-black">Save Changes</button>
+        </form>
+        <button class="exit-button" onclick="document.getElementById('edit-modal').classList.remove('active')">✖</button>
+    </div>
+</div>
+
+<script>
+    let flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+    let currentLearningIndex = 0;
+    let editingIndex = null;
+
+    // Save flashcards to local storage
+    function saveFlashcards() {
+        localStorage.setItem('flashcards', JSON.stringify(flashcards));
+    }
+
+    // Render word bank
+    function renderWordBank() {
+        const wordList = document.getElementById('word-list');
+        wordList.innerHTML = '';
+
+        flashcards.forEach((flashcard, index) => {
+            const wordItem = document.createElement('div');
+            wordItem.className = 'word-card';
+            wordItem.innerHTML = `
+                <div class="word-card-inner">
+                    <div class="word-card-front">
+                        <h4 class="text-lg font-semibold">${flashcard.word}</h4>
+                        <button onclick="openEditModal(${index})" class="icon-button"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteFlashcard(${index})" class="icon-button"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                    <div class="word-card-back">
+                        <h4 class="text-lg font-semibold">${flashcard.word}</h4>
+                        <p class="word-definition"><strong>Definition:</strong> ${flashcard.definition}</p>
+                        <p class="word-example"><strong>Example:</strong> ${flashcard.example}</p>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Review Section -->
-        <section id="review" class="py-20 bg-gray-100 hidden">
-            <div class="container mx-auto px-6">
-                <h2 class="text-3xl font-bold text-center mb-12">Review Your Words</h2>
-                <div id="review-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Words to review will be dynamically added here -->
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-gray-100 py-8">
-        <div class="container mx-auto px-6 text-center text-sm text-gray-600">
-            <p>© 2024 Flashcards. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        let words = [];
-        let reviewWords = [];
-        let currentLearnIndex = 0;
-        let learnWordCount = 0;
-
-        // Navigation and toggle sections
-        function toggleSection(sectionId) {
-            document.querySelectorAll('section').forEach(section => section.classList.add('hidden'));
-            document.getElementById(sectionId).classList.remove('hidden');
-        }
-
-        // Navigation event listeners
-        document.querySelectorAll('nav a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const sectionId = link.getAttribute('href').substring(1);
-                toggleSection(sectionId);
-                if (sectionId === 'word-bank') loadWords();
-                if (sectionId === 'review') loadReviewWords();
-            });
+            `;
+            wordList.appendChild(wordItem);
         });
+    }
 
-        // Add a new word
-        document.getElementById('add-word-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const word = document.getElementById('word').value;
-            const definition = document.getElementById('definition').value;
-            words.push({ word, definition, learned: false });
-            document.getElementById('word').value = '';
-            document.getElementById('definition').value = '';
-            alert('Word added successfully!');
-        });
+    // Open edit modal
+    function openEditModal(index) {
+        editingIndex = index;
+        const flashcard = flashcards[index];
+        document.getElementById('edit-word').value = flashcard.word;
+        document.getElementById('edit-definition').value = flashcard.definition;
+        document.getElementById('edit-example').value = flashcard.example;
+        document.getElementById('edit-modal').classList.add('active');
+    }
 
-        // Load Word Bank
-        function loadWords() {
-            const wordList = document.getElementById('word-list');
-            wordList.innerHTML = '';
-            words.forEach((wordObj, index) => {
-                const wordDiv = document.createElement('div');
-                wordDiv.classList.add('bg-white', 'p-6', 'rounded-lg', 'shadow-md');
-                wordDiv.innerHTML = `
-                    <h3 class="text-xl font-bold mb-2">${wordObj.word}</h3>
-                    <p>${wordObj.definition}</p>
-                    <button class="mt-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-600 transition duration-300" onclick="markLearned(${index})">Mark as Learned</button>
-                `;
-                wordList.appendChild(wordDiv);
-            });
+    // Delete flashcard
+    function deleteFlashcard(index) {
+        flashcards.splice(index, 1);
+        saveFlashcards();
+        renderWordBank();
+    }
+
+    // Add word form submission
+    document.getElementById('add-word-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const word = document.getElementById('word').value;
+        const definition = document.getElementById('definition').value;
+        const example = document.getElementById('example').value;
+
+        flashcards.push({ word, definition, example, learned: false });
+        saveFlashcards();
+        renderWordBank();
+        this.reset();
+    });
+
+    // Edit word form submission
+    document.getElementById('edit-word-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const updatedWord = document.getElementById('edit-word').value;
+        const updatedDefinition = document.getElementById('edit-definition').value;
+        const updatedExample = document.getElementById('edit-example').value;
+
+        flashcards[editingIndex] = { word: updatedWord, definition: updatedDefinition, example: updatedExample, learned: false };
+        saveFlashcards();
+        renderWordBank();
+        document.getElementById('edit-modal').classList.remove('active');
+    });
+
+    // Start learning
+    function startLearning() {
+        currentLearningIndex = 0;
+        showWord();
+        document.getElementById('learning-modal').classList.add('active');
+    }
+
+    // Show the current word
+    function showWord() {
+        const flashcard = flashcards.filter(card => !card.learned)[currentLearningIndex];
+        if (flashcard) {
+            document.getElementById('learn-word').innerText = flashcard.word;
+            document.getElementById('learn-definition').innerText = flashcard.definition;
+            document.getElementById('learn-example').innerText = flashcard.example;
+        } else {
+            alert("You've learned all words!");
+            exitLearning();
         }
+    }
 
-        // Load learn words one by one
-        function loadLearnWords(count) {
-            learnWordCount = count;
-            currentLearnIndex = 0;
-            document.getElementById('learn-word-container').classList.remove('hidden');
-            showNextLearnWord();
-        }
+    // Mark word as learned
+    function markLearned() {
+        flashcards[currentLearningIndex].learned = true;
+        saveFlashcards();
+        currentLearningIndex++;
+        showWord();
+    }
 
-        function showNextLearnWord() {
-            if (currentLearnIndex < learnWordCount && currentLearnIndex < words.length) {
-                const wordObj = words[currentLearnIndex];
-                document.getElementById('learn-word').textContent = wordObj.word;
-                document.getElementById('learn-definition').textContent = wordObj.definition;
-            } else {
-                alert('You have finished learning the selected words.');
-                document.getElementById('learn-word-container').classList.add('hidden');
-            }
-        }
+    // Skip the word
+    function skipWord() {
+        currentLearningIndex++;
+        showWord();
+    }
 
-        // Reschedule a word based on time interval and show next word
-        function rescheduleWord(timeInMinutes) {
-            const wordObj = words[currentLearnIndex];
-            if (timeInMinutes >= 1440) {
-                // Move to review section for 1 day and 3 day intervals
-                wordObj.learned = true;
-                reviewWords.push(wordObj);
-            } else {
-                // Reschedule for review in minutes
-                setTimeout(() => {
-                    // Show the word again after the specified time
-                    currentLearnIndex--;
-                    showNextLearnWord();
-                }, timeInMinutes * 60 * 1000);
-            }
-            currentLearnIndex++;
-            showNextLearnWord();
-        }
+    // Exit learning modal
+    function exitLearning() {
+        document.getElementById('learning-modal').classList.remove('active');
+    }
 
-        // Add event listeners for time interval buttons
-        document.getElementById('btn-1min').addEventListener('click', () => rescheduleWord(1));
-        document.getElementById('btn-5min').addEventListener('click', () => rescheduleWord(5));
-        document.getElementById('btn-1day').addEventListener('click', () => rescheduleWord(1440));
-        document.getElementById('btn-3days').addEventListener('click', () => rescheduleWord(4320));
+    // Play pronunciation (dummy function for now)
+    function playPronunciation() {
+        alert("Pronunciation feature coming soon!");
+    }
 
-        // Load words to review
-        function loadReviewWords() {
-            const reviewList = document.getElementById('review-list');
-            reviewList.innerHTML = '';
-            reviewWords.forEach((wordObj) => {
-                const wordDiv = document.createElement('div');
-                wordDiv.classList.add('bg-white', 'p-6', 'rounded-lg', 'shadow-md');
-                wordDiv.innerHTML = `
-                    <h3 class="text-xl font-bold mb-2">${wordObj.word}</h3>
-                    <p>${wordObj.definition}</p>
-                `;
-                reviewList.appendChild(wordDiv);
-            });
-        }
-
-        // Event listener for Learn start button
-        document.getElementById('learn-start').addEventListener('click', function() {
-            const count = parseInt(document.getElementById('learn-count').value);
-            loadLearnWords(count);
-        });
-
-        // Mark word as learned
-        function markLearned(index) {
-            words[index].learned = true;
-            alert('Word marked as learned!');
-        }
-
-        // Default view is Word Bank
-        toggleSection('word-bank');
-    </script>
+    // Initial render
+    renderWordBank();
+</script>
 </body>
 </html>
