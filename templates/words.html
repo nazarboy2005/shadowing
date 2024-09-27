@@ -148,6 +148,14 @@
         .icon-button:hover {
             color: #3182ce;
         }
+        .hidden-icons {
+            display: none;
+        }
+        .word-card-back .hidden-icons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
     </style>
 </head>
 <body class="font-sans gradient-bg">
@@ -196,11 +204,6 @@
         <h2 class="text-2xl font-bold">Learn Words</h2>
         <button onclick="startLearning()" class="button button-blue">Start Learning</button>
     </div>
-
-    <div class="mb-8">
-        <h2 class="text-2xl font-bold">Review Words</h2>
-        <div id="review-list" class="bg-white p-4 rounded-lg shadow-md"></div>
-    </div>
 </div>
 
 <!-- Learning Modal -->
@@ -211,8 +214,9 @@
         <p id="learn-definition" class="word-definition"></p>
         <p id="learn-example" class="word-example"></p>
         <button onclick="playPronunciation()" class="button button-blue">Pronounce</button>
-        <button onclick="markLearned()" class="button button-green">Learned</button>
-        <button onclick="skipWord()" class="button button-red">I Don't Know</button>
+        <button id="learned-btn" onclick="markLearned()" class="button button-green" style="display:none;">Learned</button>
+        <button id="dont-know-btn" onclick="showTranslation()" class="button button-red">I Don't Know</button>
+        <button id="next-btn" onclick="nextWord()" class="button button-blue" style="display:none;">Next</button>
     </div>
 </div>
 
@@ -223,147 +227,112 @@
         <form id="edit-word-form">
             <div class="mb-4">
                 <label for="edit-word" class="block font-bold mb-2">Word:</label>
-                <input type="text" id="edit-word" class="w-full border rounded px-4 py-2" required>
+                <input type="text" id="edit-word" class="w-full border rounded px-4 py-2">
             </div>
             <div class="mb-4">
                 <label for="edit-definition" class="block font-bold mb-2">Definition:</label>
-                <input type="text" id="edit-definition" class="w-full border rounded px-4 py-2" required>
+                <input type="text" id="edit-definition" class="w-full border rounded px-4 py-2">
             </div>
             <div class="mb-4">
                 <label for="edit-example" class="block font-bold mb-2">Example:</label>
-                <input type="text" id="edit-example" class="w-full border rounded px-4 py-2" required>
+                <input type="text" id="edit-example" class="w-full border rounded px-4 py-2">
             </div>
-            <button type="submit" class="button button-black">Save Changes</button>
+            <button type="button" onclick="saveEdit()" class="button button-black">Save Changes</button>
         </form>
-        <button class="exit-button" onclick="document.getElementById('edit-modal').classList.remove('active')">✖</button>
     </div>
 </div>
 
 <script>
-    let flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
-    let currentLearningIndex = 0;
-    let editingIndex = null;
+    let words = [];
+    let currentEditIndex = -1;
 
-    // Save flashcards to local storage
-    function saveFlashcards() {
-        localStorage.setItem('flashcards', JSON.stringify(flashcards));
-    }
-
-    // Render word bank
-    function renderWordBank() {
-        const wordList = document.getElementById('word-list');
-        wordList.innerHTML = '';
-
-        flashcards.forEach((flashcard, index) => {
-            const wordItem = document.createElement('div');
-            wordItem.className = 'word-card';
-            wordItem.innerHTML = `
-                <div class="word-card-inner">
-                    <div class="word-card-front">
-                        <h4 class="text-lg font-semibold">${flashcard.word}</h4>
-                        <button onclick="openEditModal(${index})" class="icon-button"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteFlashcard(${index})" class="icon-button"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                    <div class="word-card-back">
-                        <h4 class="text-lg font-semibold">${flashcard.word}</h4>
-                        <p class="word-definition"><strong>Definition:</strong> ${flashcard.definition}</p>
-                        <p class="word-example"><strong>Example:</strong> ${flashcard.example}</p>
-                    </div>
-                </div>
-            `;
-            wordList.appendChild(wordItem);
-        });
-    }
-
-    // Open edit modal
-    function openEditModal(index) {
-        editingIndex = index;
-        const flashcard = flashcards[index];
-        document.getElementById('edit-word').value = flashcard.word;
-        document.getElementById('edit-definition').value = flashcard.definition;
-        document.getElementById('edit-example').value = flashcard.example;
-        document.getElementById('edit-modal').classList.add('active');
-    }
-
-    // Delete flashcard
-    function deleteFlashcard(index) {
-        flashcards.splice(index, 1);
-        saveFlashcards();
-        renderWordBank();
-    }
-
-    // Add word form submission
     document.getElementById('add-word-form').addEventListener('submit', function (e) {
         e.preventDefault();
         const word = document.getElementById('word').value;
         const definition = document.getElementById('definition').value;
         const example = document.getElementById('example').value;
-
-        flashcards.push({ word, definition, example, learned: false });
-        saveFlashcards();
-        renderWordBank();
-        this.reset();
+        words.push({ word, definition, example });
+        document.getElementById('word').value = '';
+        document.getElementById('definition').value = '';
+        document.getElementById('example').value = '';
+        displayWords();
     });
 
-    // Edit word form submission
-    document.getElementById('edit-word-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const updatedWord = document.getElementById('edit-word').value;
-        const updatedDefinition = document.getElementById('edit-definition').value;
-        const updatedExample = document.getElementById('edit-example').value;
+    function displayWords() {
+        const wordList = document.getElementById("word-list");
+        wordList.innerHTML = '';
+        words.forEach((word, index) => {
+            const wordCard = document.createElement("div");
+            wordCard.classList.add("word-card");
+            wordCard.innerHTML = `
+                <div class="word-card-inner">
+                    <div class="word-card-front">
+                        <h3 class="font-bold">${word.word}</h3>
+                    </div>
+                    <div class="word-card-back">
+                        <h3 class="font-bold">${word.word}</h3>
+                        <p class="word-definition"><strong>Definition:</strong> ${word.definition}</p>
+                        <p class="word-example"><strong>Example:</strong> ${word.example}</p>
+                        <div class="hidden-icons">
+                            <button onclick="editWord(${index})" class="icon-button"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteWord(${index})" class="icon-button"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            wordList.appendChild(wordCard);
+        });
+    }
 
-        flashcards[editingIndex] = { word: updatedWord, definition: updatedDefinition, example: updatedExample, learned: false };
-        saveFlashcards();
-        renderWordBank();
+    function editWord(index) {
+        currentEditIndex = index;
+        const word = words[index];
+        document.getElementById('edit-word').value = word.word;
+        document.getElementById('edit-definition').value = word.definition;
+        document.getElementById('edit-example').value = word.example;
+        document.getElementById('edit-modal').classList.add('active');
+    }
+
+    function deleteWord(index) {
+        words.splice(index, 1);
+        displayWords();
+    }
+
+    function saveEdit() {
+        const word = document.getElementById('edit-word').value;
+        const definition = document.getElementById('edit-definition').value;
+        const example = document.getElementById('edit-example').value;
+        words[currentEditIndex] = { word, definition, example };
         document.getElementById('edit-modal').classList.remove('active');
-    });
+        displayWords();
+    }
 
-    // Start learning
     function startLearning() {
-        currentLearningIndex = 0;
-        showWord();
         document.getElementById('learning-modal').classList.add('active');
+        nextWord();
     }
 
-    // Show the current word
-    function showWord() {
-        const flashcard = flashcards.filter(card => !card.learned)[currentLearningIndex];
-        if (flashcard) {
-            document.getElementById('learn-word').innerText = flashcard.word;
-            document.getElementById('learn-definition').innerText = flashcard.definition;
-            document.getElementById('learn-example').innerText = flashcard.example;
-        } else {
-            alert("You've learned all words!");
-            exitLearning();
-        }
+    function nextWord() {
+        const randomIndex = Math.floor(Math.random() * words.length);
+        const word = words[randomIndex];
+        document.getElementById('learn-word').textContent = word.word;
+        document.getElementById('learn-definition').textContent = 'Definition: ' + word.definition;
+        document.getElementById('learn-example').textContent = 'Example: ' + word.example;
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('dont-know-btn').style.display = 'block';
+        document.getElementById('learned-btn').style.display = 'none';
     }
 
-    // Mark word as learned
-    function markLearned() {
-        flashcards[currentLearningIndex].learned = true;
-        saveFlashcards();
-        currentLearningIndex++;
-        showWord();
+    function showTranslation() {
+        document.getElementById('dont-know-btn').style.display = 'none';
+        document.getElementById('learned-btn').style.display = 'block';
+        document.getElementById('next-btn').style.display = 'block';
     }
 
-    // Skip the word
-    function skipWord() {
-        currentLearningIndex++;
-        showWord();
-    }
-
-    // Exit learning modal
     function exitLearning() {
         document.getElementById('learning-modal').classList.remove('active');
     }
-
-    // Play pronunciation (dummy function for now)
-    function playPronunciation() {
-        alert("Pronunciation feature coming soon!");
-    }
-
-    // Initial render
-    renderWordBank();
 </script>
+
 </body>
 </html>

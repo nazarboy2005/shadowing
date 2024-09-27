@@ -150,3 +150,7 @@ class FlashCardsView(TemplateView):
 
 class WordsView(TemplateView):
     template_name = 'words.html'
+
+
+class LearningView(TemplateView):
+    template_name = 'learn.html'
