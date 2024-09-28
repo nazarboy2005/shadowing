@@ -41,6 +41,7 @@
             color: #f6f6f6;
         }
 
+        /* Desktop Navigation Links */
         .nav-links {
             display: flex;
             gap: 20px;
@@ -55,6 +56,44 @@
 
         .nav-links a:hover {
             color: #fff;
+        }
+
+        /* Hamburger Menu Styling (Hidden on Desktop) */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 3px 0;
+            transition: 0.4s;
+        }
+
+        /* Mobile Menu Styling (Initially Hidden) */
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background-color: #333;
+            padding: 10px 0;
+        }
+
+        .mobile-menu a {
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .mobile-menu a:hover {
+            background-color: #444;
         }
 
         /* Add padding to account for fixed header */
@@ -234,14 +273,29 @@
         @media (max-width: 768px) {
             .main-container {
                 grid-template-columns: 1fr; /* Stack content for smaller screens */
+                width: 95%; /* Fit better on mobile screens */
             }
 
             .word-bank {
                 width: 100%;
+                margin-bottom: 20px;
             }
 
             .sidebar {
                 width: 100%;
+            }
+
+            /* Mobile Hamburger Menu */
+            .hamburger {
+                display: flex; /* Show hamburger menu on mobile */
+            }
+
+            .nav-links {
+                display: none; /* Hide desktop nav links on mobile */
+            }
+
+            .mobile-menu {
+                display: none; /* Ensure hidden by default */
             }
 
             /* Make words smaller on mobile */
@@ -266,6 +320,10 @@
                 font-size: 0.9rem; /* Smaller input/select font */
                 padding: 8px;
             }
+
+            .nav-links {
+                font-size: 0.85rem; /* Reduce navigation link size */
+            }
         }
     </style>
 </head>
@@ -275,7 +333,18 @@
     <header>
         <nav>
             <div class="logo">Shadowing</div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#">Features</a>
+                <a href="#">Pricing</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="mobile-menu" id="mobile-menu">
                 <a href="#">Home</a>
                 <a href="#">Features</a>
                 <a href="#">Pricing</a>
@@ -364,6 +433,8 @@
         const wordList = document.getElementById('wordList');
         const searchBar = document.getElementById('searchBar');
         const filterSelect = document.getElementById('filterSelect');
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
 
         // Function to display words in the word list
         function displayWords(filter = '', sortOrder = 'recent') {
@@ -421,6 +492,16 @@
 
         filterSelect.addEventListener('change', () => {
             displayWords(searchBar.value, filterSelect.value);
+        });
+
+        // Toggle mobile menu
+        hamburger.addEventListener('click', () => {
+            const menu = document.getElementById('mobile-menu');
+            if (menu.style.display === "none" || menu.style.display === "") {
+                menu.style.display = "flex";
+            } else {
+                menu.style.display = "none";
+            }
         });
 
         // Initial display of words
