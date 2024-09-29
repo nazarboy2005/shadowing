@@ -12,4 +12,4 @@ class PriceList(TemplateView):
 
 
 class PracticeView(TemplateView):
-    template_name = 'choose_video_or_paste_url.html'
+    template_name = 'practice.html'
