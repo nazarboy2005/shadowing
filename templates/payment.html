@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments - Shadowing</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Background gradient */
+        .gradient-bg {
+            background: linear-gradient(135deg, #f6f8fa 0%, #e9ecef 100%);
+        }
+
+        /* Button hover effect */
+        .btn {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #333;
+            transform: scale(1.05);
+        }
+
+        /* Shadow for form section */
+        .shadow-lg {
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <script>
+        // Simple JavaScript validation for card info
+        function validatePaymentForm() {
+            const cardNumber = document.getElementById('card_number').value;
+            const expiryDate = document.getElementById('expiry_date').value;
+            const cvv = document.getElementById('cvv').value;
+
+            if (!/^\d{16}$/.test(cardNumber.replace(/\s/g, ''))) {
+                alert('Please enter a valid 16-digit card number.');
+                return false;
+            }
+
+            if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+                alert('Please enter a valid expiry date (MM/YY).');
+                return false;
+            }
+
+            if (!/^\d{3}$/.test(cvv)) {
+                alert('Please enter a valid 3-digit CVV.');
+                return false;
+            }
+
+            alert('Payment details updated successfully!');
+            return true;
+        }
+    </script>
+</head>
+
+<body class="font-sans text-gray-800 antialiased gradient-bg">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold">Shadowing</div>
+            <a href="index.html" class="text-sm font-semibold hover:text-gray-600 transition duration-300">Back to Home</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="mt-16 pt-12">
+        <section class="container mx-auto px-6 py-12">
+            <h1 class="text-3xl font-bold text-center mb-8">Update Payment Method</h1>
+
+            <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Payment Details</h2>
+                <form action="#" method="POST" onsubmit="return validatePaymentForm()">
+                    <div class="mb-4">
+                        <label for="card_name" class="block text-sm font-semibold text-gray-700 mb-2">Cardholder's Name</label>
+                        <input type="text" id="card_name" name="card_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600" placeholder="John Doe" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="card_number" class="block text-sm font-semibold text-gray-700 mb-2">Card Number</label>
+                        <input type="text" id="card_number" name="card_number" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600" placeholder="1234 5678 9012 3456" required>
+                    </div>
+                    <div class="mb-4 grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="expiry_date" class="block text-sm font-semibold text-gray-700 mb-2">Expiry Date</label>
+                            <input type="text" id="expiry_date" name="expiry_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600" placeholder="MM/YY" required>
+                        </div>
+                        <div>
+                            <label for="cvv" class="block text-sm font-semibold text-gray-700 mb-2">CVV</label>
+                            <input type="text" id="cvv" name="cvv" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600" placeholder="123" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-black text-white py-3 rounded-full font-semibold hover:bg-gray-800 transition duration-300 btn">Update Payment Method</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-100 py-8">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-600">
+            <p>© 2024 Shadowing. All rights reserved.</p>
+            <div class="mt-2">
+                <a href="#" class="hover:text-gray-900 mr-4">Privacy Policy</a>
+                <a href="#" class="hover:text-gray-900">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

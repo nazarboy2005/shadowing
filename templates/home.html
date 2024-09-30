@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Shadowing - Master English Pronunciation and Fluency</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #f6f8fa 0%, #e9ecef 100%);
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* CTA Button Hover */
+        .btn-cta {
+            transition: transform 0.3s ease, background-color 0.3s;
+        }
+
+        .btn-cta:hover {
+            transform: scale(1.05);
+            background-color: #ffffff;
+            color: black;
+        }
+
+        /* Link Hover Effects */
+        a {
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #007bff; /* Blue hover effect for links */
+        }
+
+        /* Nav Shadow */
+        header {
+            backdrop-filter: blur(10px);
+            transition: background-color 0.3s ease;
+        }
+
+        /* Hover Effect for Nav Items */
+        nav a:hover {
+            color: #ff6600;
+        }
+
+        /* Pricing Cards Hover */
+        .pricing-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #f8f9fa;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu {
+                display: block;
+            }
+
+            .desktop-menu {
+                display: none;
+            }
+        }
+    </style>
+
+    <!-- JavaScript to Handle Dynamic Header -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Simulate user login state
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+
+            if (isLoggedIn) {
+                document.getElementById('logged-in-header').style.display = 'block';
+                document.getElementById('logged-out-header').style.display = 'none';
+            } else {
+                document.getElementById('logged-in-header').style.display = 'none';
+                document.getElementById('logged-out-header').style.display = 'block';
+            }
+        });
+
+        // Simulate login and logout for demo purposes
+        function login() {
+            localStorage.setItem('userLoggedIn', 'true');
+            location.reload();
+        }
+
+        function logout() {
+            localStorage.removeItem('userLoggedIn');
+            location.reload();
+        }
+    </script>
+</head>
+
+<body class="font-sans text-gray-800 antialiased">
+
+    <!-- Header for Registered Users (Logged In) -->
+    <header id="logged-in-header" class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50" style="display: none;">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold">Shadowing</div>
+            <ul class="hidden sm:flex space-x-8 desktop-menu">
+                <li><a href="#features" class="hover:text-gray-600 transition duration-300">Features</a></li>
+                <li><a href="#how-it-works" class="hover:text-gray-600 transition duration-300">How It Works</a></li>
+                <li><a href="#pricing" class="hover:text-gray-600 transition duration-300">Pricing</a></li>
+                <li><a href="#effectiveness" class="hover:text-gray-600 transition duration-300">Effectiveness</a></li>
+                <li><a href="#profile" class="hover:text-gray-600 transition duration-300">Profile</a></li>
+                <li><button onclick="logout()" class="hover:text-red-600 transition duration-300">Logout</button></li>
+            </ul>
+            <button class="mobile-menu text-gray-800 text-xl" id="mobile-menu-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Header for Non-Registered Users (Logged Out) -->
+    <header id="logged-out-header" class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50" style="display: none;">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold">Shadowing</div>
+            <ul class="hidden sm:flex space-x-8 desktop-menu">
+                <li><a href="#features" class="hover:text-gray-600 transition duration-300">Features</a></li>
+                <li><a href="#how-it-works" class="hover:text-gray-600 transition duration-300">How It Works</a></li>
+                <li><a href="#pricing" class="hover:text-gray-600 transition duration-300">Pricing</a></li>
+                <li><a href="#effectiveness" class="hover:text-gray-600 transition duration-300">Effectiveness</a></li>
+                <li><a href="#login" class="hover:text-gray-600 transition duration-300" onclick="login()">Log In</a></li>
+                <li><a href="#register" class="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition duration-300">Sign Up</a></li>
+            </ul>
+            <button class="mobile-menu text-gray-800 text-xl" id="mobile-menu-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="mt-16 pt-16">
+        <!-- Hero Section -->
+        <section id="hero" class="py-16 md:py-20 gradient-bg">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-3xl md:text-5xl font-bold mb-6 text-gray-900 hover:text-blue-500">Master English with Shadowing</h1>
+                <p class="text-base md:text-xl mb-8 md:mb-10 max-w-2xl mx-auto text-gray-700">Improve your pronunciation and fluency using our
+                    innovative AI-powered shadowing technique.</p>
+                <a href="#get-started" class="bg-black text-white px-6 py-2 md:px-8 md:py-3 rounded-full text-lg font-semibold btn-cta">Get Started</a>
+                <div class="max-w-4xl mx-auto mt-8">
+                    <div class="aspect-w-16 aspect-h-9">
+                        <iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen class="rounded-lg shadow-lg"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-16 md:py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-12 hover:text-blue-500">Powerful Features for Effective Learning</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <div class="text-center hover:text-blue-500">
+                        <div class="text-4xl mb-4">🎥</div>
+                        <h3 class="text-lg md:text-xl font-bold mb-2">Versatile Content Options</h3>
+                        <p class="text-sm md:text-base">Practice with our curated videos or use any YouTube URL for personalized learning</p>
+                    </div>
+                    <div class="text-center hover:text-blue-500">
+                        <div class="text-4xl mb-4">🎙️</div>
+                        <h3 class="text-lg md:text-xl font-bold mb-2">Advanced Speech Recognition</h3>
+                        <p class="text-sm md:text-base">Our AI analyzes your pronunciation and provides real-time feedback</p>
+                    </div>
+                    <div class="text-center hover:text-blue-500">
+                        <div class="text-4xl mb-4">📊</div>
+                        <h3 class="text-lg md:text-xl font-bold mb-2">Progress Tracking</h3>
+                        <p class="text-sm md:text-base">Visualize your improvement over time with detailed analytics</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="py-16 md:py-20 bg-gray-100">
+            <div class="container mx-auto px-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-12 hover:text-blue-500">How Shadowing Works</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <h3 class="text-lg md:text-xl font-bold mb-4">1. Choose Content</h3>
+                        <p class="text-sm md:text-base">Select from our library or paste a YouTube URL of your choice</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <h3 class="text-lg md:text-xl font-bold mb-4">2. Shadow the Speaker</h3>
+                        <p class="text-sm md:text-base">Listen and repeat, mimicking the speaker's pronunciation and intonation</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <h3 class="text-lg md:text-xl font-bold mb-4">3. Get AI Feedback</h3>
+                        <p class="text-sm md:text-base">Receive instant analysis and suggestions to improve your speech</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="py-16 md:py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-12 hover:text-blue-500">Simple, Affordable Pricing</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div class="pricing-card border border-gray-200 p-8 rounded-lg hover:border-blue-500">
+                        <h3 class="text-2xl font-bold mb-4">Free</h3>
+                        <p class="mb-6">Perfect for casual learners</p>
+                        <ul class="mb-8 space-y-2">
+                            <li>✓ 5 shadowing sessions/month</li>
+                            <li>✓ Basic progress tracking</li>
+                            <li>✓ Access to sample videos</li>
+                        </ul>
+                        <a href="#get-started"
+                            class="block w-full bg-black text-white text-center py-3 rounded-full font-semibold btn-cta">Get Started</a>
+                    </div>
+                    <div class="pricing-card border border-gray-200 p-8 rounded-lg bg-gray-50 hover:border-blue-500">
+                        <h3 class="text-2xl font-bold mb-4">$12/month</h3>
+                        <p class="mb-6">For serious language learners</p>
+                        <ul class="mb-8 space-y-2">
+                            <li>✓ Unlimited shadowing sessions</li>
+                            <li>✓ Advanced AI feedback</li>
+                            <li>✓ Detailed progress analytics</li>
+                            <li>✓ Use any YouTube video</li>
+                        </ul>
+                        <a href="#get-started"
+                            class="block w-full bg-black text-white text-center py-3 rounded-full font-semibold btn-cta">Choose Plan</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Effectiveness Section -->
+        <section id="effectiveness" class="py-16 md:py-20 bg-gray-100">
+            <div class="container mx-auto px-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-12 hover:text-blue-500">The Power of Shadowing</h2>
+                <div class="max-w-3xl mx-auto">
+                    <p class="text-sm md:text-base mb-6">Shadowing is a proven technique for improving language skills, particularly pronunciation and fluency. According to a study published in the Language Learning Journal, students who practiced shadowing showed significant improvements in their speaking abilities compared to traditional methods.</p>
+                    <p class="text-sm md:text-base mb-6">Dr. Yo Hamada, a leading researcher in the field, states that "Shadowing is effective for improving learners' listening skills, pronunciation, and general language proficiency." (Hamada, Y. (2016). Shadowing: Who benefits and how? Uncovering a booming EFL teaching technique for listening comprehension. Language Teaching Research, 20(1), 35-52.)</p>
+                    <p class="text-sm md:text-base">Our AI-powered platform takes this effective technique and enhances it with instant feedback and progress tracking, allowing you to improve faster and more efficiently than ever before.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Get Started Section -->
+        <section id="get-started" class="py-16 md:py-20 bg-black text-white text-center">
+            <div class="container mx-auto px-6">
+                <h2 class="text-2xl md:text-3xl font-bold mb-8 hover:text-gray-300">Ready to Transform Your English?</h2>
+                <p class="text-base md:text-xl mb-8 max-w-2xl mx-auto">Join now and experience the power of AI-assisted shadowing for yourself.</p>
+                <a href="#" class="bg-white text-black px-6 py-3 md:px-8 md:py-4 rounded-full text-lg font-bold btn-cta">Start Your Journey</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 py-8">
+        <div class="container mx-auto px-6 text-center text-sm text-gray-600">
+            <p>© 2024 Shadowing. All rights reserved.</p>
+            <div class="mt-2">
+                <a href="#" class="hover:text-gray-900 mr-4">Privacy Policy</a>
+                <a href="#" class="hover:text-gray-900">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

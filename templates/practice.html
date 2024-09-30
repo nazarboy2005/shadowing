@@ -1,0 +1,434 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags and title -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadowing - Improve Your Language Skills</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Custom Styles -->
+    <style>
+        /* Custom styles for modal blur effect */
+        .blur {
+            filter: blur(5px);
+            pointer-events: none;
+        }
+        /* Custom styles for the translation display */
+        #translationDisplay {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: #4B5563; /* Gray-700 */
+        }
+        /* Add these new styles */
+        #player-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            border-radius: 0.5rem;
+        }
+        #player-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        /* Adjust the input styles to match the image */
+        input[type="number"], input[type="text"] {
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            width: 100%;
+        }
+        /* Style for labels */
+        label {
+            font-size: 0.875rem;
+            color: #4b5563;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        #registerModal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .upgrade-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .upgrade-btn::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff00, #00aa00, #008800, #00ff00);
+            z-index: -1;
+            filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .upgrade-btn:hover::before {
+            opacity: 1;
+        }
+        .shadow-glow {
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        #actionButton {
+            transition: all 0.3s ease-in-out;
+        }
+        #actionButton:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-white text-black">
+    <!-- Header -->
+    <header class="flex items-center justify-between p-4 border-b border-gray-200">
+        <div class="flex items-center">
+            <img src="logo/shadowing_logo.jpg" alt="Logo" class="w-10 h-10 mr-2">
+            <span class="text-2xl font-bold">Shadowing</span>
+        </div>
+        <!-- Buttons -->
+        <div class="flex items-center space-x-2">
+            <a href="price_list.html" class="upgrade-btn px-4 py-2 border-2 border-green-400 text-green-400 rounded-full hover:bg-green-400 hover:text-white transition duration-300 ease-in-out shadow-glow">Upgrade</a>
+            <a href="login.html" class="px-4 py-2 border border-black text-black rounded-full hover:bg-black hover:text-white transition duration-300 ease-in-out">Sign In</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto mt-6 px-4 md:px-0 max-w-screen-xl">
+        <div id="content-container" class="flex flex-col md:flex-row md:space-x-6">
+            <!-- Left Section -->
+            <div class="w-full md:w-2/3">
+                <!-- URL Input Section -->
+                <div class="mb-4 relative">
+                    <input type="text" id="youtubeUrl" placeholder="Paste YouTube video URL" class="w-full bg-gray-100 rounded-full px-4 py-2 pr-24">
+                    <button id="actionButton" class="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1 bg-black text-white rounded-full hover:bg-white hover:text-black border border-black transition duration-300 ease-in-out">Paste</button>
+                </div>
+                
+                <!-- Video Section -->
+                <div id="player-container" class="aspect-w-16 aspect-h-9 bg-gray-900 rounded-lg overflow-hidden">
+                    <div id="player"></div>
+                </div>
+                
+                <!-- Time Controls -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="startTime" class="font-semibold">Start time (seconds):</label>
+                        <input type="number" id="startTime" placeholder="e.g., 10" min="0" class="w-full mt-1 bg-gray-100 rounded-md px-3 py-2">
+                    </div>
+                    <div>
+                        <label for="endTime" class="font-semibold">End time (seconds):</label>
+                        <input type="number" id="endTime" placeholder="e.g., 20" min="0" class="w-full mt-1 bg-gray-100 rounded-md px-3 py-2">
+                    </div>
+                    <div>
+                        <label for="repeats" class="font-semibold">Repeats:</label>
+                        <input type="number" id="repeats" placeholder="Number of repeats" min="1" max="10" class="w-full mt-1 bg-gray-100 rounded-md px-3 py-2">
+                    </div>
+                </div>
+
+                <!-- Speed Control -->
+                <div class="mt-4">
+                    <label for="speed" class="font-semibold">Playback speed:</label>
+                    <input type="number" id="speed" step="0.1" min="0.5" max="2" value="1" class="w-full mt-1 bg-gray-100 rounded-md px-3 py-2">
+                </div>
+
+                <!-- Play Segment Button -->
+                <button onclick="playSegment()" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">Play Segment</button>
+            </div>
+
+            <!-- Right Section -->
+            <div class="mt-6 md:mt-0 md:w-1/3">
+                <!-- Tabs -->
+                <div class="flex bg-gray-200 rounded-lg overflow-hidden">
+                    <button id="transcriptBtn" class="flex-1 py-2 text-center text-black bg-white font-semibold">Transcript</button>
+                    <button id="flashcardsBtn" class="flex-1 py-2 text-center text-gray-600 hover:text-black">Flashcards</button>
+                </div>
+
+                <!-- Transcript Content -->
+                <div id="transcript" class="bg-gray-50 p-4 rounded-b-lg shadow" style="max-height: 400px; overflow-y: auto;">
+                    <div class="transcript-text" id="transcriptText">
+                        <p class="text-gray-600">Click any word to see the translation.</p>
+                        <!-- Transcript will be populated here -->
+                    </div>
+                    <!-- Translation Display -->
+                    <div id="translationDisplay"></div>
+                </div>
+
+                <!-- Flashcards Content -->
+                <div id="flashcards" class="hidden bg-gray-50 p-4 rounded-b-lg shadow" style="max-height: 400px; overflow-y: auto;">
+                    <h3 class="text-xl font-semibold mb-2">Flashcards</h3>
+                    <!-- Flashcards content -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Registration Modal -->
+    <div id="registerModal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg z-50">
+        <h2 class="text-2xl font-bold mb-4">Register to Enjoy All Features</h2>
+        <p class="mb-6">Sign up to unlock the flashcard feature and more!</p>
+        <button id="getStartedButton" class="w-full py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">Get Started</button>
+    </div>
+    <div id="modalOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+
+    <!-- Scripts -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let player;
+        let isLoggedIn = false; // Set this based on user's login status
+
+        function onYouTubeIframeAPIReady() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const videoId = urlParams.get('video_id');
+
+            if (videoId) {
+                player = new YT.Player('player', {
+                    height: '360',
+                    width: '640',
+                    videoId: videoId,
+                    events: {
+                        'onReady': onPlayerReady
+                    }
+                });
+            } else {
+                alert('No video ID provided. Please select a video first.');
+            }
+        }
+
+        function onPlayerReady(event) {
+            console.log("Player is ready");
+            // You can add any initialization code here
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const youtubeUrlInput = document.getElementById('youtubeUrl');
+            const actionButton = document.getElementById('actionButton');
+            const flashcardsBtn = document.getElementById('flashcardsBtn');
+            const registerModal = document.getElementById('registerModal');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const getStartedButton = document.getElementById('getStartedButton');
+            const contentContainer = document.getElementById('content-container');
+
+            function updateButtonState() {
+                if (youtubeUrlInput.value.trim() === '') {
+                    actionButton.textContent = 'Paste';
+                } else {
+                    actionButton.textContent = 'Start';
+                }
+                // The button style remains the same for both states
+            }
+
+            youtubeUrlInput.addEventListener('input', updateButtonState);
+
+            actionButton.addEventListener('click', async function() {
+                if (actionButton.textContent === 'Paste') {
+                    try {
+                        const text = await navigator.clipboard.readText();
+                        youtubeUrlInput.value = text;
+                        updateButtonState();
+                    } catch (err) {
+                        console.error('Failed to read clipboard contents: ', err);
+                    }
+                } else if (actionButton.textContent === 'Start') {
+                    const videoId = getYouTubeVideoID(youtubeUrlInput.value);
+                    if (videoId) {
+                        loadVideo(videoId);
+                    } else {
+                        alert('Invalid YouTube URL');
+                    }
+                }
+            });
+
+            flashcardsBtn.addEventListener('click', function() {
+                if (!isLoggedIn) {
+                    showRegisterModal();
+                } else {
+                    // Show flashcards content
+                    console.log("Show flashcards content for logged-in users");
+                }
+            });
+
+            getStartedButton.addEventListener('click', function() {
+                // Handle registration process
+                hideRegisterModal();
+            });
+
+            function showRegisterModal() {
+                registerModal.classList.remove('hidden');
+                modalOverlay.classList.remove('hidden');
+                contentContainer.classList.add('blur');
+            }
+
+            function hideRegisterModal() {
+                registerModal.classList.add('hidden');
+                modalOverlay.classList.add('hidden');
+                contentContainer.classList.remove('blur');
+            }
+
+            function getYouTubeVideoID(url) {
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = url.match(regExp);
+                return (match && match[2].length === 11) ? match[2] : null;
+            }
+
+            function loadVideo(videoId) {
+                if (player) {
+                    player.loadVideoById(videoId);
+                } else {
+                    player = new YT.Player('player', {
+                        height: '360',
+                        width: '640',
+                        videoId: videoId,
+                        events: {
+                            'onReady': onPlayerReady
+                        }
+                    });
+                }
+            }
+
+            // Update loadTranscript function
+            async function loadTranscript() {
+                const transcriptTextElement = document.getElementById('transcriptText');
+                const videoId = new URLSearchParams(window.location.search).get('video_id');
+
+                if (!videoId) {
+                    transcriptTextElement.innerHTML = 'No video selected. Please choose a video first.';
+                    return;
+                }
+
+                // Placeholder for AI transcript generation
+                const transcript = await getAITranscript(videoId);
+
+                // Clear previous transcript
+                transcriptTextElement.innerHTML = '';
+
+                // Split transcript into words and create clickable spans
+                transcript.split(' ').forEach(word => {
+                    const wordSpan = document.createElement('span');
+                    wordSpan.textContent = word + ' ';
+                    wordSpan.classList.add('word', 'cursor-pointer', 'text-black', 'hover:text-blue-600');
+                    wordSpan.onclick = () => translateWord(word);
+                    transcriptTextElement.appendChild(wordSpan);
+                });
+            }
+
+            // Call loadTranscript when the page loads
+            loadTranscript();
+
+            // Update playSegment function to use YouTube player
+            window.playSegment = function() {
+                const startTime = parseFloat(document.getElementById('startTime').value);
+                const endTime = parseFloat(document.getElementById('endTime').value);
+                let repeats = parseInt(document.getElementById('repeats').value) || 1;
+                const speed = parseFloat(document.getElementById('speed').value) || 1;
+
+                if (isNaN(startTime) || isNaN(endTime) || startTime >= endTime) {
+                    alert('Please enter valid start and end times.');
+                    return;
+                }
+
+                player.setPlaybackRate(speed);
+                player.seekTo(startTime);
+                player.playVideo();
+
+                let intervalId = setInterval(function() {
+                    if (player.getCurrentTime() >= endTime) {
+                        if (--repeats > 0) {
+                            player.seekTo(startTime);
+                        } else {
+                            player.pauseVideo();
+                            clearInterval(intervalId);
+                        }
+                    }
+                }, 100);
+            }
+
+            // Function to show the transcript tab
+            function showTranscript() {
+                document.getElementById('transcript').classList.remove('hidden');
+                document.getElementById('flashcards').classList.add('hidden');
+                document.getElementById('transcriptBtn').classList.add('bg-white', 'font-semibold');
+                document.getElementById('flashcardsBtn').classList.remove('bg-white', 'font-semibold');
+            }
+
+            // Function to show the flashcards tab
+            function showFlashcards() {
+                if (!isLoggedIn) {
+                    document.getElementById('registerModal').classList.remove('hidden');
+                    document.getElementById('content-container').classList.add('blur');
+                } else {
+                    document.getElementById('transcript').classList.add('hidden');
+                    document.getElementById('flashcards').classList.remove('hidden');
+                    document.getElementById('flashcardsBtn').classList.add('bg-white', 'font-semibold');
+                    document.getElementById('transcriptBtn').classList.remove('bg-white', 'font-semibold');
+                }
+            }
+
+            // Function to close the modal
+            function closeModal() {
+                document.getElementById('registerModal').classList.add('hidden');
+                document.getElementById('content-container').classList.remove('blur');
+                showTranscript();
+            }
+
+            // Mock function to simulate AI transcript generation
+            async function getAITranscript(youtubeUrl) {
+                // Simulate an API call delay
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        // Placeholder transcript
+                        resolve('This is a sample transcript generated by AI.');
+                    }, 1000);
+                });
+            }
+
+            // Function to translate a word (Mock implementation)
+            async function translateWord(word) {
+                const translationDisplay = document.getElementById('translationDisplay');
+
+                // Placeholder for translation API call
+                const translation = await getWordTranslation(word);
+
+                translationDisplay.textContent = `Translation of "${word}": ${translation}`;
+            }
+
+            // Mock function to simulate word translation
+            async function getWordTranslation(word) {
+                // Simulate an API call delay
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        // Placeholder translation
+                        resolve('Translated Word');
+                    }, 500);
+                });
+            }
+
+            // Event listener to load transcript when URL is provided
+            document.getElementById('youtubeUrl').addEventListener('change', loadTranscript);
+        });
+    </script>
+</body>
+</html>
