@@ -140,8 +140,8 @@ class ProfileView(UpdateView): #LoginRequiredMixin
         return account
 
 
-class BillingsView(TemplateView):
-    template_name = 'billings.html'
+class PaymentsView(TemplateView):
+    template_name = 'payment.html'
 
 
 
@@ -150,3 +150,7 @@ class FlashCardsView(TemplateView):
 
 class WordsView(TemplateView):
     template_name = 'words.html'
+
+
+class LearningView(TemplateView):
+    template_name = 'learn.html'
