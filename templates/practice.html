@@ -1,392 +1,241 @@
 {% load static %}
-<!DOCTYPE html><html lang="en">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <!-- Meta tags and title -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouLearn Shadowing</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <title>Shadowing - Improve Your Language Skills</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Custom Styles -->
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #ffffff;
-            color: #000000;
-            margin: 0;
-            padding: 0;
+        /* Custom styles for modal blur effect */
+        .blur {
+            filter: blur(5px);
+            pointer-events: none;
         }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background-color: #fff;
-            color: #000;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .header .logo {
-            display: flex;
-            align-items: center;
-        }
-
-        .header .logo img {
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-        }
-
-        .header .logo-text {
-            font-size: 24px;
-            font-weight: bold;
-            color: #000;
-        }
-
-        .header .button-container {
-            display: flex;
-            gap: 10px;
-        }
-
-        .header .button {
-            padding: 10px 20px;
-            border-radius: 9999px;
-            font-size: 14px;
-            font-weight: semibold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .header .upgrade-btn {
-            background-color: #000;
-            color: #fff;
-        }
-
-        .header .upgrade-btn:hover {
-            background-color: #333;
-        }
-
-        .header .signin-btn {
-            background-color: #fff;
-            color: #000;
-            border: 1px solid #000;
-        }
-
-        .header .signin-btn:hover {
-            background-color: #f5f5f5;
-        }
-
-        .header .input-container {
-            display: flex;
-            align-items: center;
-            flex-grow: 2;
-            margin-left: 20px;
-            margin-right: 20px;
-        }
-
-        .header .input-container input {
-            background-color: #eeeeee;
-            color: #333333;
-            border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
-            width: 100%;
-        }
-
-        .header .input-container button {
-            margin-left: -45px;
-            background: none;
-            border: none;
-            color: #333333;
+        /* Custom styles for the translation display */
+        #translationDisplay {
+            margin-top: 10px;
             font-size: 1rem;
-            cursor: pointer;
-        }
-
-        .header .buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .header .buttons .upgrade {
-            background-color: #00ff88;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        .header .buttons .upgrade:hover {
-            background-color: #00cc70;
-        }
-
-        .header .buttons .sign-in {
-            background-color: transparent;
-            color: #000000;
-            border: 2px solid #000000;
-            border-radius: 25px;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            padding: 20px;
-            gap: 20px;
-        }
-
-        .left,
-        .right {
-            background-color: #f8f8f8;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .left {
-            width: 65%;
-        }
-
-        .right {
-            width: 30%;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        video {
-            width: 100%;
-            border-radius: 8px;
-        }
-
-        .time-controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        input[type="time"],
-        input[type="number"],
-        input[type="text"] {
-            background-color: #eeeeee;
-            color: #333333;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            margin-top: 10px;
-            width: 100%;
-        }
-
-        .tabs {
-            display: flex;
-            background-color: #e0e0e0;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .tabs button {
-            flex: 1;
-            padding: 12px 0;
-            color: #666666;
-            background-color: #e0e0e0;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .tabs button.active {
-            background-color: #cccccc;
-            color: black;
-        }
-
-        .tab-content {
-            background-color: #f8f8f8;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 10px;
-            flex-grow: 1;
-            overflow-y: auto;
-            max-height: 400px;
-        }
-
-        .word {
-            cursor: pointer;
-            color: #000000;
-            font-weight: bold;
-        }
-
-        .word:hover {
-            color: #0840f7;
-        }
-
-        #addToFlashcards {
-            background-color: #000000;
-            color: white;
-            border-radius: 5px;
-            padding: 10px;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-
-        #flashcardList {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        #flashcardList li {
-            background-color: #eeeeee;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-        }
-
-        .transcript-text {
-            font-size: 1rem;
-            line-height: 1.5;
-            background-color: #eeeeee;
-            padding: 15px;
-            border-radius: 8px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .transcript-text p {
-            color: #333333;
-        }
-
-        .transcript-text p:hover {
-            color: #0056b3;
-            transition: color 0.3s;
+            color: #4B5563; /* Gray-700 */
         }
     </style>
 </head>
-
-<body>
-    <header class="header">
-        <div class="logo">
-            <img src="{% static 'logo/shadowing_logo.jpg' %}" alt="Logo" width="40" height="40">
-            <span class="logo-text">Shadowing</span>
+<body class="bg-white text-black">
+    <!-- Header -->
+    <header class="flex items-center justify-between p-4 border-b border-gray-200">
+        <div class="flex items-center">
+            <img src="{% static 'logo/shadowing_logo.jpg' %}" alt="Logo" class="w-10 h-10 mr-2">
+            <span class="text-2xl font-bold">Shadowing</span>
         </div>
-        <div class="input-container">
-            <input type="text" id="youtubeUrl" placeholder="Paste YouTube video URL">
-            <button><span>&#8984; K</span></button>
+        <!-- URL Input Section -->
+        <div class="flex items-center flex-grow mx-4">
+            <input type="text" id="youtubeUrl" placeholder="Paste YouTube video URL" class="flex-grow bg-gray-100 rounded-full px-4 py-2">
+            <button class="ml-2 text-gray-500 hover:text-black"><span>&#8984; K</span></button>
         </div>
-        <div class="button-container">
-            <a href="#" class="button upgrade-btn">Upgrade</a>
-            <a href="#" class="button signin-btn">Sign In</a>
+        <!-- Buttons -->
+        <div class="flex items-center space-x-2">
+            <a href="#" class="px-4 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition">Upgrade</a>
+            <a href="#" class="px-4 py-2 border border-black text-black rounded-full hover:bg-gray-100 transition">Sign In</a>
         </div>
     </header>
 
-    <main class="container mx-auto mt-6">
-        <!-- Main content -->
-        <div class="container">
-            <div class="left">
-                <!-- Video section -->
-                <video id="videoPlayer" controls>
+    <!-- Main Content -->
+    <main class="container mx-auto mt-6 px-4 md:px-0">
+        <div id="content-container" class="md:flex md:space-x-6">
+            <!-- Left Section -->
+            <div class="md:w-2/3">
+                <!-- Video Section -->
+                <video id="videoPlayer" controls class="w-full rounded-lg shadow">
                     <source src="" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
 
-                <!-- Time controls -->
-                <div class="time-controls">
-                    <div>Start time: <input type="time" id="startTime"></div>
-                    <div>End time: <input type="time" id="endTime"></div>
-                    <div>Repeats: <input type="number" id="repeats" min="1" max="10"></div>
+                <!-- Time Controls -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="startTime" class="font-semibold">Start time (seconds):</label>
+                        <input type="number" id="startTime" placeholder="e.g., 10" min="0" class="w-full mt-1 bg-gray-100 rounded-md px-3 py-2">
+                    </div>
+                    <div>
+                        <label for="endTime" class="font-semibold">End time (seconds):</label>
+                        <input type="number" id="endTime" placeholder="e.g., 20" min="0" class="w-full mt-1 bg-gray-100 rounded-md px-3 py-2">
+                    </div>
+                    <div>
+                        <label for="repeats" class="font-semibold">Repeats:</label>
+                        <input type="number" id="repeats" placeholder="Number of repeats" min="1" max="10" class="w-full mt-1 bg-gray-100 rounded-md px-3 py-2">
+                    </div>
                 </div>
 
-                <button onclick="playSegment()">Play Segment</button>
+                <!-- Speed Control -->
+                <div class="mt-4">
+                    <label for="speed" class="font-semibold">Playback speed:</label>
+                    <input type="number" id="speed" step="0.1" min="0.5" max="2" value="1" class="w-full mt-1 bg-gray-100 rounded-md px-3 py-2">
+                </div>
+
+                <!-- Play Segment Button -->
+                <button onclick="playSegment()" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">Play Segment</button>
             </div>
 
-            <div class="right">
+            <!-- Right Section -->
+            <div class="mt-6 md:mt-0 md:w-1/3">
                 <!-- Tabs -->
-                <div class="tabs">
-                    <button id="transcriptBtn" class="active" onclick="showTranscript()">Transcript</button>
-                    <button id="flashcardsBtn" onclick="showFlashcards()">Flashcards</button>
+                <div class="flex bg-gray-200 rounded-lg overflow-hidden">
+                    <button id="transcriptBtn" class="flex-1 py-2 text-center text-black bg-white font-semibold" onclick="showTranscript()">Transcript</button>
+                    <button id="flashcardsBtn" class="flex-1 py-2 text-center text-gray-600 hover:text-black" onclick="showFlashcards()">Flashcards</button>
                 </div>
 
-                <!-- Transcript content -->
-                <div id="transcript" class="tab-content">
+                <!-- Transcript Content -->
+                <div id="transcript" class="bg-gray-50 p-4 rounded-b-lg shadow" style="max-height: 400px; overflow-y: auto;">
                     <div class="transcript-text" id="transcriptText">
-                        <p>Click any word to see the translation</p>
-                        <p><span class="word" onclick="selectWord(this)">Hello</span>, <span class="word"
-                                onclick="selectWord(this)">this</span> <span class="word"
-                                onclick="selectWord(this)">is</span> <span class="word"
-                                onclick="selectWord(this)">a</span> <span class="word"
-                                onclick="selectWord(this)">test</span> transcript.</p>
+                        <p class="text-gray-600">Click any word to see the translation.</p>
+                        <!-- Transcript will be populated here -->
                     </div>
-                    <button id="addToFlashcards" class="button" onclick="addToFlashcards()">Add to Flashcards</button>
+                    <!-- Translation Display -->
+                    <div id="translationDisplay"></div>
                 </div>
 
-                <!-- Flashcards content -->
-                <div id="flashcards" class="tab-content" style="display: none;">
-                    <h3>Flashcards</h3>
-                    <ul id="flashcardList"></ul>
+                <!-- Flashcards Content -->
+                <div id="flashcards" class="hidden bg-gray-50 p-4 rounded-b-lg shadow" style="max-height: 400px; overflow-y: auto;">
+                    <h3 class="text-xl font-semibold mb-2">Flashcards</h3>
+                    <!-- Flashcards content -->
                 </div>
             </div>
         </div>
     </main>
 
-    <script>
-        const transcriptText = document.getElementById('transcriptText');
-        const flashcardList = document.getElementById('flashcardList');
-        let selectedWords = [];
+    <!-- Registration Modal -->
+    <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-11/12 md:w-1/3">
+            <div class="flex justify-end">
+                <button class="text-gray-500 hover:text-black" onclick="closeModal()">&times;</button>
+            </div>
+            <h2 class="text-2xl font-bold mb-4">Register to Enjoy All Features</h2>
+            <p class="mb-6">Sign up to unlock the flashcard feature and more!</p>
+            <button class="w-full py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">Get Started</button>
+        </div>
+    </div>
 
+    <!-- Scripts -->
+    <script>
+        // User login status (should be dynamically set from your backend)
+        const isLoggedIn = false; // Change to true if user is logged in
+
+        // Function to play a segment of the video
         function playSegment() {
             const video = document.getElementById('videoPlayer');
-            const startTime = document.getElementById('startTime').valueAsNumber / 1000;
-            const endTime = document.getElementById('endTime').valueAsNumber / 1000;
-            const repeats = parseInt(document.getElementById('repeats').value) || 1;
+            const startTime = parseFloat(document.getElementById('startTime').value);
+            const endTime = parseFloat(document.getElementById('endTime').value);
+            let repeats = parseInt(document.getElementById('repeats').value) || 1;
+            const speed = parseFloat(document.getElementById('speed').value) || 1;
+
+            if (isNaN(startTime) || isNaN(endTime) || startTime >= endTime) {
+                alert('Please enter valid start and end times.');
+                return;
+            }
 
             video.currentTime = startTime;
+            video.playbackRate = speed;
             video.play();
 
-            video.ontimeupdate = function () {
+            video.addEventListener('timeupdate', function onTimeUpdate() {
                 if (video.currentTime >= endTime) {
                     if (--repeats > 0) {
                         video.currentTime = startTime;
                     } else {
                         video.pause();
-                        video.ontimeupdate = null;
+                        video.removeEventListener('timeupdate', onTimeUpdate);
                     }
                 }
-            };
-        }
-
-        function selectWord(element) {
-            selectedWords.push(element.innerText);
-            element.style.backgroundColor = '#ddd';
-        }
-
-        function addToFlashcards() {
-            selectedWords.forEach(word => {
-                const li = document.createElement('li');
-                li.textContent = word;
-                flashcardList.appendChild(li);
             });
-            selectedWords = [];
-            document.querySelectorAll('.word').forEach(el => el.style.backgroundColor = '');
         }
 
+        // Function to show the transcript tab
         function showTranscript() {
-            document.getElementById('transcript').style.display = 'block';
-            document.getElementById('flashcards').style.display = 'none';
-            document.getElementById('transcriptBtn').classList.add('active');
-            document.getElementById('flashcardsBtn').classList.remove('active');
+            document.getElementById('transcript').classList.remove('hidden');
+            document.getElementById('flashcards').classList.add('hidden');
+            document.getElementById('transcriptBtn').classList.add('bg-white', 'font-semibold');
+            document.getElementById('flashcardsBtn').classList.remove('bg-white', 'font-semibold');
         }
 
+        // Function to show the flashcards tab
         function showFlashcards() {
-            document.getElementById('transcript').style.display = 'none';
-            document.getElementById('flashcards').style.display = 'block';
-            document.getElementById('transcriptBtn').classList.remove('active');
-            document.getElementById('flashcardsBtn').classList.add('active');
+            if (!isLoggedIn) {
+                document.getElementById('registerModal').classList.remove('hidden');
+                document.getElementById('content-container').classList.add('blur');
+            } else {
+                document.getElementById('transcript').classList.add('hidden');
+                document.getElementById('flashcards').classList.remove('hidden');
+                document.getElementById('flashcardsBtn').classList.add('bg-white', 'font-semibold');
+                document.getElementById('transcriptBtn').classList.remove('bg-white', 'font-semibold');
+            }
         }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById('registerModal').classList.add('hidden');
+            document.getElementById('content-container').classList.remove('blur');
+            showTranscript();
+        }
+
+        // Function to load transcript (AI Integration)
+        async function loadTranscript() {
+            const transcriptTextElement = document.getElementById('transcriptText');
+            const youtubeUrl = document.getElementById('youtubeUrl').value;
+
+            // Placeholder for AI transcript generation
+            // You need to replace this with actual API call to generate transcript
+            const transcript = await getAITranscript(youtubeUrl);
+
+            // Clear previous transcript
+            transcriptTextElement.innerHTML = '';
+
+            // Split transcript into words and create clickable spans
+            transcript.split(' ').forEach(word => {
+                const wordSpan = document.createElement('span');
+                wordSpan.textContent = word + ' ';
+                wordSpan.classList.add('word', 'cursor-pointer', 'text-black', 'hover:text-blue-600');
+                wordSpan.onclick = () => translateWord(word);
+                transcriptTextElement.appendChild(wordSpan);
+            });
+        }
+
+        // Mock function to simulate AI transcript generation
+        async function getAITranscript(youtubeUrl) {
+            // Simulate an API call delay
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    // Placeholder transcript
+                    resolve('This is a sample transcript generated by AI.');
+                }, 1000);
+            });
+        }
+
+        // Function to translate a word (Mock implementation)
+        async function translateWord(word) {
+            const translationDisplay = document.getElementById('translationDisplay');
+
+            // Placeholder for translation API call
+            const translation = await getWordTranslation(word);
+
+            translationDisplay.textContent = `Translation of "${word}": ${translation}`;
+        }
+
+        // Mock function to simulate word translation
+        async function getWordTranslation(word) {
+            // Simulate an API call delay
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    // Placeholder translation
+                    resolve('Translated Word');
+                }, 500);
+            });
+        }
+
+        // Event listener to load transcript when URL is provided
+        document.getElementById('youtubeUrl').addEventListener('change', loadTranscript);
     </script>
 </body>
-
 </html>
