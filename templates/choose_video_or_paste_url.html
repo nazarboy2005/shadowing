@@ -37,7 +37,6 @@
             width: 40px;
             height: 40px;
             margin-right: 10px;
-<!--            filter: brightness(0);-->
         }
 
         .navbar .logo-text {
@@ -51,6 +50,39 @@
             gap: 10px;
         }
 
+        .navbar .button {
+            margin-left: 20px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .upgrade-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .navbar .upgrade-btn::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff00, #00aa00, #008800, #00ff00);
+            z-index: -1;
+            filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .navbar .upgrade-btn:hover::before {
+            opacity: 1;
+        }
+        .shadow-glow {
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
         .navbar .button {
             margin-left: 20px;
             padding: 10px 20px;
@@ -199,9 +231,9 @@
 <div class="main-content">
     <h1>What do you want to shadow today?</h1>
     <div class="input-section">
-        <input type="text" placeholder="Paste YouTube video link">
-        <div class="key-icon">
-            <span>⌘ K</span>
+        <input type="text" id="youtube-link" placeholder="Paste YouTube video link">
+        <div class="key-icon" id="paste-start-button">
+            <button id="action-button" style="background:none; border:none; color:#fff; cursor:pointer;">Paste</button>
         </div>
     </div>
 
@@ -234,5 +266,72 @@
     © 2024 Shadowing. All rights reserved.
 </div>
 
-</body>
-</html>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const youtubeInput = document.getElementById('youtube-link');
+        const actionButton = document.getElementById('action-button');
+        const apiKey = 'AIzaSyDcXw5BAn1OCHL6RUhqgCpsXnTDxF6rJ9I';
+        const validYouTubeURL = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
+
+        function isValidYouTubeURL(url) {
+            return validYouTubeURL.test(url);
+        }
+
+        function getYouTubeVideoID(url) {
+            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[7].length == 11) ? match[7] : false;
+        }
+
+        async function fetchVideoDetails(videoId) {
+            const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.items && data.items.length > 0) {
+                    console.log("Redirecting to practice page...");
+                    var practiceUrl = "{% url 'home:practice' %}";
+                    window.location.href = `${practiceUrl}?video_id=${videoId}`;
+                } else {
+                    alert('This YouTube video is not available. Please try another video.');
+                }
+            } catch (error) {
+                console.error('Error fetching video details:', error);
+                alert('An error occurred while checking the video. Please try again.');
+            }
+        }
+
+        function updateButtonState() {
+            if (isValidYouTubeURL(youtubeInput.value)) {
+                actionButton.textContent = 'Start';
+            } else {
+                actionButton.textContent = 'Paste';
+            }
+        }
+
+        youtubeInput.addEventListener('input', updateButtonState);
+
+        actionButton.addEventListener('click', async function() {
+            if (actionButton.textContent === 'Paste') {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    youtubeInput.value = text;
+                    updateButtonState();
+                } catch (err) {
+                    console.error('Failed to read clipboard contents: ', err);
+                }
+            } else if (actionButton.textContent === 'Start') {
+                const videoId = getYouTubeVideoID(youtubeInput.value);
+                if (videoId) {
+                    console.log("Video ID:", videoId);
+                    fetchVideoDetails(videoId);
+                } else {
+                    alert('Invalid YouTube URL');
+                }
+            }
+        });
+
+        // Initialize button state on page load
+        updateButtonState();
+    });
+</script>
