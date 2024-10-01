@@ -6,65 +6,70 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout, get_user_model, authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, FormView, UpdateView, ListView
+from django.views.generic import TemplateView, CreateView, FormView, UpdateView
 
-from users.forms import RegisterForm, EmailVerificationForm, LoginForm, AccountModelForm
+from users.forms import (
+    RegisterForm,
+    EmailVerificationForm,
+    LoginForm,
+    AccountModelForm,
+)
 from users.models import ConfirmationCodesModel, AccountModel
 
 UserModel = get_user_model()
 
 
 def send_confirmation_email(user):
-    random_code = random.randint(100000, 999999)
-    active_code = ConfirmationCodesModel.objects.filter(code=random_code).exists()
-    if active_code:
-        send_confirmation_email(user)
-    else:
-        ConfirmationCodesModel.objects.create(
-            code=random_code,
-            user=user
-        )
-        try:
-            send_mail(message=str(random_code), subject='Confirmation Code', recipient_list=[user.email],
-                      from_email=settings.EMAIL_HOST_USER)
-            return True
-
-        except ConnectionError as e:
-            return False
+    max_attempts = 5
+    for _ in range(max_attempts):
+        random_code = random.randint(100000, 999999)
+        if not ConfirmationCodesModel.objects.filter(code=random_code).exists():
+            ConfirmationCodesModel.objects.create(code=random_code, user=user)
+            try:
+                send_mail(
+                    subject='Confirmation Code',
+                    message=f'Your confirmation code is: {random_code}',
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[user.email],
+                )
+                return True
+            except (ConnectionError, BadHeaderError) as e:
+                # Log the error if needed
+                return False
+    # If all attempts fail
+    return False
 
 
 def verify_email(request):
     if request.method == 'GET':
-        storage = messages.get_messages(request)
-        storage.used = True
-        return render(request, 'verify-email.html')
+        form = EmailVerificationForm()
+        return render(request, 'verify-email.html', {'form': form})
     else:
         form = EmailVerificationForm(request.POST)
         if form.is_valid():
-            received_code = form.cleaned_data["code"]
-            user_and_code = ConfirmationCodesModel.objects.filter(code=received_code).first()
-            if user_and_code:
+            received_code = form.cleaned_data['code']
+            user_code = ConfirmationCodesModel.objects.filter(code=received_code).first()
+            if user_code:
                 time_now = datetime.now(pytz.timezone(settings.TIME_ZONE))
-                sent_time = user_and_code.created_at.astimezone(pytz.timezone(settings.TIME_ZONE)) + timedelta(
-                    minutes=2)
-                if sent_time > time_now:
-                    db_user = UserModel.objects.filter(id=user_and_code.user.id).first()
-                    db_user.is_active = True
-                    db_user.save()
-                    user_and_code.delete()
+                code_expiry_time = user_code.created_at + timedelta(minutes=2)
+                if code_expiry_time > time_now:
+                    user = user_code.user
+                    user.is_active = True
+                    user.save()
+                    user_code.delete()
+                    messages.success(request, 'Email verified successfully! Please log in.')
                     return redirect('users:login')
-
                 else:
-                    messages.error(request, 'Confirmation Code is expired')
+                    user_code.delete()  # Remove expired code
+                    messages.error(request, 'Confirmation code has expired.')
             else:
-                messages.error(request, 'The Code Is Invalid')
-
+                messages.error(request, 'Invalid confirmation code.')
         else:
-            messages.error(request, 'Wrong Password')
-        return redirect('users:verify_email')
+            messages.error(request, 'Please enter a valid confirmation code.')
+        return render(request, 'verify-email.html', {'form': form})
 
 
 class RegisterView(CreateView):
@@ -73,23 +78,24 @@ class RegisterView(CreateView):
     success_url = reverse_lazy('users:verify_email')
 
     def form_valid(self, form):
-        storage = messages.get_messages(self.request)
-        storage.used = True
         user = form.save(commit=False)
-        user.is_active = False
+        user.is_active = False  # Deactivate account until email verification
         user.save()
+        AccountModel.objects.create(user=user)  # Create associated account model
 
         if send_confirmation_email(user):
+            messages.info(self.request, 'A confirmation code has been sent to your email.')
             return redirect(self.success_url)
         else:
-            messages.error(self.request, 'The email could not be sent! Please Try again Later!')
-            return redirect(self.success_url)
+            messages.error(
+                self.request,
+                'Failed to send confirmation email. Please try again later.',
+            )
+            return redirect('users:register')
 
     def form_invalid(self, form):
-        storage = messages.get_messages(self.request)
-        storage.used = True
-        messages.error(request=self.request, message=form.errors)
-        return redirect('users:register')
+        messages.error(self.request, 'Registration failed. Please correct the errors below.')
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class LoginView(FormView):
@@ -97,38 +103,33 @@ class LoginView(FormView):
     form_class = LoginForm
 
     def form_valid(self, form):
-        next_page = self.request.POST.get('next', '/')
-        if 'comment' in next_page:
-            next_page = next_page.replace('comment', 'details')
         username = form.cleaned_data['username']
         password = form.cleaned_data['password']
+        user = authenticate(self.request, username=username, password=password)
 
-        user = authenticate(username=username, password=password)
         if user is not None:
-            login(self.request, user=user)
-            print(f"Redirecting to: {next_page}")
+            login(self.request, user)
+            next_page = self.request.GET.get('next') or reverse_lazy('pages:home')
             return redirect(next_page)
         else:
-            storage = messages.get_messages(self.request)
-            storage.used = True
-            messages.error(self.request, 'Wrong Password or Username')
-
+            messages.error(self.request, 'Invalid username or password.')
             return redirect('users:login')
 
     def form_invalid(self, form):
-        storage = messages.get_messages(self.request)
-        storage.used = True
-        messages.error(self.request, 'Wrong Password or Username')
-        return redirect('users:login')
+        messages.error(self.request, 'Invalid login credentials.')
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 def logout_view(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         logout(request)
+        return redirect('pages:home')
+    else:
         return redirect('pages:home')
 
 
-class ProfileView(UpdateView): #LoginRequiredMixin
+class ProfileView(LoginRequiredMixin, UpdateView):
+    """Allow users to update their profile."""
     template_name = 'profile.html'
     form_class = AccountModelForm
     success_url = reverse_lazy('users:profile')
@@ -136,21 +137,32 @@ class ProfileView(UpdateView): #LoginRequiredMixin
     login_url = reverse_lazy('users:login')
 
     def get_object(self, queryset=None):
-        account, _ = AccountModel.objects.get_or_create(user=self.request.user)
-        return account
+        return AccountModel.objects.get(user=self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your profile has been updated.')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Please correct the errors below.')
+        return self.render_to_response(self.get_context_data(form=form))
 
 
-class PaymentsView(TemplateView):
+class PaymentsView(LoginRequiredMixin, TemplateView):
     template_name = 'payment.html'
+    login_url = reverse_lazy('users:login')
 
 
-
-class FlashCardsView(TemplateView):
+class FlashCardsView(LoginRequiredMixin, TemplateView):
     template_name = 'flashcard.html'
+    login_url = reverse_lazy('users:login')
 
-class WordsView(TemplateView):
+
+class WordsView(LoginRequiredMixin, TemplateView):
     template_name = 'words.html'
+    login_url = reverse_lazy('users:login')
 
 
-class LearningView(TemplateView):
+class LearningView(LoginRequiredMixin, TemplateView):
     template_name = 'learn.html'
+    login_url = reverse_lazy('users:login')
