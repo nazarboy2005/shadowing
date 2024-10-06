@@ -10,9 +10,10 @@ from django.core.mail import send_mail, BadHeaderError
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, FormView, UpdateView
+from django.contrib.auth.models import User
+from django.views import View
 
 from users.forms import (
-    RegisterForm,
     EmailVerificationForm,
     LoginForm,
     AccountModelForm,
@@ -72,30 +73,39 @@ def verify_email(request):
         return render(request, 'verify-email.html', {'form': form})
 
 
-class RegisterView(CreateView):
+class RegisterView(View):
     template_name = 'register.html'
-    form_class = RegisterForm
-    success_url = reverse_lazy('users:verify_email')
 
-    def form_valid(self, form):
-        user = form.save(commit=False)
-        user.is_active = False  # Deactivate account until email verification
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        username = request.POST['username']
+        email = request.POST['email']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+
+        if password1 != password2:
+            error_message = "Passwords do not match."
+            return render(request, self.template_name, {'error_message': error_message})
+
+        if User.objects.filter(username=username).exists():
+            error_message = "Username already exists."
+            return render(request, self.template_name, {'error_message': error_message})
+
+        if User.objects.filter(email=email).exists():
+            error_message = "Email already exists."
+            return render(request, self.template_name, {'error_message': error_message})
+
+        # Create the user
+        user = User.objects.create_user(username=username, email=email, password=password1)
         user.save()
-        AccountModel.objects.create(user=user)  # Create associated account model
 
-        if send_confirmation_email(user):
-            messages.info(self.request, 'A confirmation code has been sent to your email.')
-            return redirect(self.success_url)
-        else:
-            messages.error(
-                self.request,
-                'Failed to send confirmation email. Please try again later.',
-            )
-            return redirect('users:register')
+        # Create an AccountModel instance for the new user
+        AccountModel.objects.create(user=user)
 
-    def form_invalid(self, form):
-        messages.error(self.request, 'Registration failed. Please correct the errors below.')
-        return self.render_to_response(self.get_context_data(form=form))
+        messages.success(request, 'Your account has been created successfully! Please verify your email.')
+        return redirect('users:login')
 
 
 class LoginView(FormView):
@@ -109,7 +119,7 @@ class LoginView(FormView):
 
         if user is not None:
             login(self.request, user)
-            next_page = self.request.GET.get('next') or reverse_lazy('pages:home')
+            next_page = self.request.GET.get('next') or reverse_lazy('home:home')
             return redirect(next_page)
         else:
             messages.error(self.request, 'Invalid username or password.')
@@ -119,14 +129,9 @@ class LoginView(FormView):
         messages.error(self.request, 'Invalid login credentials.')
         return self.render_to_response(self.get_context_data(form=form))
 
-
 def logout_view(request):
-    if request.method == 'POST':
-        logout(request)
-        return redirect('pages:home')
-    else:
-        return redirect('pages:home')
-
+    logout(request)
+    return redirect('home:home')
 
 class ProfileView(LoginRequiredMixin, UpdateView):
     """Allow users to update their profile."""
@@ -137,7 +142,12 @@ class ProfileView(LoginRequiredMixin, UpdateView):
     login_url = reverse_lazy('users:login')
 
     def get_object(self, queryset=None):
-        return AccountModel.objects.get(user=self.request.user)
+        # Try to get the AccountModel for the logged-in user
+        try:
+            return AccountModel.objects.get(user=self.request.user)
+        except AccountModel.DoesNotExist:
+            # If no AccountModel exists, create one for the user
+            return AccountModel.objects.create(user=self.request.user)
 
     def form_valid(self, form):
         messages.success(self.request, 'Your profile has been updated.')
@@ -166,3 +176,14 @@ class WordsView(LoginRequiredMixin, TemplateView):
 class LearningView(LoginRequiredMixin, TemplateView):
     template_name = 'learn.html'
     login_url = reverse_lazy('users:login')
+
+
+class ProfileEditView(UpdateView):
+    model = AccountModel
+    form_class = AccountModelForm
+    template_name = 'users/profile_edit.html'
+    success_url = reverse_lazy('users:profile')  # Redirect to profile page after editing
+
+    def get_object(self):
+        return AccountModel.objects.get(user=self.request.user)
+

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,7 +33,7 @@
         }
 
         a:hover {
-            color: #007bff; /* Blue hover effect for links */
+            color: #007bff;
         }
 
         /* Nav Shadow */
@@ -78,76 +77,41 @@
             }
         }
     </style>
-
-    <!-- JavaScript to Handle Dynamic Header -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Simulate user login state
-            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-
-            if (isLoggedIn) {
-                document.getElementById('logged-in-header').style.display = 'block';
-                document.getElementById('logged-out-header').style.display = 'none';
-            } else {
-                document.getElementById('logged-in-header').style.display = 'none';
-                document.getElementById('logged-out-header').style.display = 'block';
-            }
-        });
-
-        // Simulate login and logout for demo purposes
-        function login() {
-            localStorage.setItem('userLoggedIn', 'true');
-            location.reload();
-        }
-
-        function logout() {
-            localStorage.removeItem('userLoggedIn');
-            location.reload();
-        }
-    </script>
 </head>
 
 <body class="font-sans text-gray-800 antialiased">
 
     <!-- Header for Registered Users (Logged In) -->
-    <header id="logged-in-header" class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50" style="display: none;">
+    {% if user.is_authenticated %}
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="text-2xl font-bold">Shadowing</div>
             <ul class="hidden sm:flex space-x-8 desktop-menu">
                 <li><a href="#features" class="hover:text-gray-600 transition duration-300">Features</a></li>
                 <li><a href="#how-it-works" class="hover:text-gray-600 transition duration-300">How It Works</a></li>
-                <li><a href="#pricing" class="hover:text-gray-600 transition duration-300">Pricing</a></li>
+                <li><a href="{% url 'home:price_list' %}" class="hover:text-gray-600 transition duration-300">Pricing</a></li>
                 <li><a href="#effectiveness" class="hover:text-gray-600 transition duration-300">Effectiveness</a></li>
-                <li><a href="#profile" class="hover:text-gray-600 transition duration-300">Profile</a></li>
-                <li><button onclick="logout()" class="hover:text-red-600 transition duration-300">Logout</button></li>
+                <li><a href="{% url 'users:profile' %}" class="hover:text-gray-600 transition duration-300">Profile</a></li>
+                <li><a href="{% url 'users:logout' %}" class="hover:text-red-600 transition duration-300">Logout</a></li>
             </ul>
-            <button class="mobile-menu text-gray-800 text-xl" id="mobile-menu-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
-                </svg>
-            </button>
         </nav>
     </header>
-
+    {% else %}
     <!-- Header for Non-Registered Users (Logged Out) -->
-    <header id="logged-out-header" class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50" style="display: none;">
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="text-2xl font-bold">Shadowing</div>
             <ul class="hidden sm:flex space-x-8 desktop-menu">
                 <li><a href="#features" class="hover:text-gray-600 transition duration-300">Features</a></li>
-                <li><a href="#how-it-works" class="hover:text-gray-600 transition duration-300">How It Works</a></li>
-                <li><a href="#pricing" class="hover:text-gray-600 transition duration-300">Pricing</a></li>
+                <li><a href="{% url 'home:practice' %}" class="hover:text-gray-600 transition duration-300">How It Works</a></li>
+                <li><a href="{% url 'home:price_list' %}" class="hover:text-gray-600 transition duration-300">Pricing</a></li>
                 <li><a href="#effectiveness" class="hover:text-gray-600 transition duration-300">Effectiveness</a></li>
-                <li><a href="#login" class="hover:text-gray-600 transition duration-300" onclick="login()">Log In</a></li>
-                <li><a href="#register" class="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition duration-300">Sign Up</a></li>
+                <li><a href="{% url 'users:login' %}" class="hover:text-gray-600 transition duration-300">Log In</a></li>
+                <li><a href="{% url 'users:register' %}" class="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition duration-300">Sign Up</a></li>
             </ul>
-            <button class="mobile-menu text-gray-800 text-xl" id="mobile-menu-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
-                </svg>
-            </button>
         </nav>
     </header>
+    {% endif %}
 
     <!-- Main Content -->
     <main class="mt-16 pt-16">
@@ -155,14 +119,11 @@
         <section id="hero" class="py-16 md:py-20 gradient-bg">
             <div class="container mx-auto px-6 text-center">
                 <h1 class="text-3xl md:text-5xl font-bold mb-6 text-gray-900 hover:text-blue-500">Master English with Shadowing</h1>
-                <p class="text-base md:text-xl mb-8 md:mb-10 max-w-2xl mx-auto text-gray-700">Improve your pronunciation and fluency using our
-                    innovative AI-powered shadowing technique.</p>
-                <a href="#get-started" class="bg-black text-white px-6 py-2 md:px-8 md:py-3 rounded-full text-lg font-semibold btn-cta">Get Started</a>
+                <p class="text-base md:text-xl mb-8 md:mb-10 max-w-2xl mx-auto text-gray-700">Improve your pronunciation and fluency using our innovative AI-powered shadowing technique.</p>
+                <a href="{% url 'users:register' %}" class="bg-black text-white px-6 py-2 md:px-8 md:py-3 rounded-full text-lg font-semibold btn-cta">Get Started</a>
                 <div class="max-w-4xl mx-auto mt-8">
                     <div class="aspect-w-16 aspect-h-9">
-                        <iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen class="rounded-lg shadow-lg"></iframe>
+                        <iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="rounded-lg shadow-lg"></iframe>
                     </div>
                 </div>
             </div>
@@ -226,8 +187,7 @@
                             <li>✓ Basic progress tracking</li>
                             <li>✓ Access to sample videos</li>
                         </ul>
-                        <a href="#get-started"
-                            class="block w-full bg-black text-white text-center py-3 rounded-full font-semibold btn-cta">Get Started</a>
+                        <a href="{% url 'users:register' %}" class="block w-full bg-black text-white text-center py-3 rounded-full font-semibold btn-cta">Get Started</a>
                     </div>
                     <div class="pricing-card border border-gray-200 p-8 rounded-lg bg-gray-50 hover:border-blue-500">
                         <h3 class="text-2xl font-bold mb-4">$12/month</h3>
@@ -238,8 +198,7 @@
                             <li>✓ Detailed progress analytics</li>
                             <li>✓ Use any YouTube video</li>
                         </ul>
-                        <a href="#get-started"
-                            class="block w-full bg-black text-white text-center py-3 rounded-full font-semibold btn-cta">Choose Plan</a>
+                        <a href="{% url 'users:register' %}" class="block w-full bg-black text-white text-center py-3 rounded-full font-semibold btn-cta">Choose Plan</a>
                     </div>
                 </div>
             </div>
@@ -262,7 +221,7 @@
             <div class="container mx-auto px-6">
                 <h2 class="text-2xl md:text-3xl font-bold mb-8 hover:text-gray-300">Ready to Transform Your English?</h2>
                 <p class="text-base md:text-xl mb-8 max-w-2xl mx-auto">Join now and experience the power of AI-assisted shadowing for yourself.</p>
-                <a href="#" class="bg-white text-black px-6 py-3 md:px-8 md:py-4 rounded-full text-lg font-bold btn-cta">Start Your Journey</a>
+                <a href="{% url 'users:register' %}" class="bg-white text-black px-6 py-3 md:px-8 md:py-4 rounded-full text-lg font-bold btn-cta">Start Your Journey</a>
             </div>
         </section>
     </main>
@@ -278,5 +237,4 @@
         </div>
     </footer>
 </body>
-
 </html>

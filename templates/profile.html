@@ -12,13 +12,15 @@
     </style>
 </head>
 <body class="font-sans text-gray-800 antialiased gradient-bg">
+    <!-- Header -->
     <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="text-2xl font-bold">Shadowing</div>
-            <a href="index.html" class="text-sm font-semibold hover:text-gray-600 transition duration-300">Back to Home</a>
+            <a href="/" class="text-sm font-semibold hover:text-gray-600 transition duration-300">Back to Home</a>
         </nav>
     </header>
 
+    <!-- Main Content -->
     <main class="mt-16 pt-16">
         <section class="container mx-auto px-6 py-16">
             <h1 class="text-3xl font-bold text-center mb-12">Your Profile</h1>
@@ -28,10 +30,10 @@
                 <div class="flex items-center space-x-8 mb-8">
                     <img class="h-24 w-24 rounded-full border border-gray-200 object-cover" src="https://via.placeholder.com/150" alt="Profile Picture">
                     <div>
-                        <h2 class="text-2xl font-bold">John Doe</h2>
-                        <p class="text-gray-600">johndoe@example.com</p>
+                        <h2 class="text-2xl font-bold">{{ user.username }}</h2>
+                        <p class="text-gray-600">{{ user.email }}</p>
                     </div>
-                    <a href="#" class="ml-auto bg-black text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-800 transition duration-300">Edit Profile</a>
+                    <a href="{% url 'users:profile_edit' %}" class="ml-auto bg-black text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-800 transition duration-300">Edit Profile</a>
                 </div>
 
                 <!-- Account Information -->
@@ -39,17 +41,17 @@
                     <div>
                         <h3 class="text-xl font-bold mb-4">Account Information</h3>
                         <ul class="space-y-4 text-gray-600">
-                            <li><strong>Full Name:</strong> John Doe</li>
-                            <li><strong>Email:</strong> johndoe@example.com</li>
+                            <li><strong>Full Name:</strong> {{ user.get_full_name }}</li>
+                            <li><strong>Email:</strong> {{ user.email }}</li>
                             <li><strong>Subscription:</strong> Monthly Plan - $12/month</li>
-                            <li><strong>Member Since:</strong> January 2024</li>
+                            <li><strong>Member Since:</strong> {{ user.date_joined|date:"F Y" }}</li>
                         </ul>
                     </div>
 
                     <div>
                         <h3 class="text-xl font-bold mb-4">Settings</h3>
                         <ul class="space-y-4 text-gray-600">
-                            <li><a href="#" class="text-black hover:underline">Change Password</a></li>
+                            <li><a href="{% url 'users:change_password' %}" class="text-black hover:underline">Change Password</a></li>
                             <li><a href="#" class="text-black hover:underline">Update Payment Method</a></li>
                             <li><a href="#" class="text-black hover:underline">Manage Subscription</a></li>
                             <li><a href="#" class="text-red-500 hover:underline">Cancel Subscription</a></li>
