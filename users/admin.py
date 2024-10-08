@@ -15,11 +15,11 @@ class AccountModelAdmin(admin.ModelAdmin):
 
 @admin.register(ConfirmationCodesModel)
 class ConfirmationCodesModelAdmin(admin.ModelAdmin):
-    list_display = ('code', 'user', 'created_at')
-    search_fields = ('code', 'user__username')
-    readonly_fields = ('code', 'user', 'created_at')
+    list_display = ('code', 'email', 'created_at')  # Use 'email' instead of 'user'
+    search_fields = ('code', 'email')  # Use 'email' instead of 'user__username'
+    readonly_fields = ('code', 'email', 'created_at')  # Use 'email' instead of 'user'
     fieldsets = (
         (None, {
-            'fields': ('code', 'user', 'created_at')
+            'fields': ('code', 'email', 'created_at')  # Use 'email' instead of 'user'
         }),
     )

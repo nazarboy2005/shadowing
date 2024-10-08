@@ -7,6 +7,7 @@ class AccountModel(models.Model):
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='account')
     full_name = models.CharField(max_length=255, null=True, blank=True)
     country = models.CharField(max_length=255, null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', default='default/img.png')
 
     def __str__(self):
         return self.user.username
@@ -18,15 +19,16 @@ class AccountModel(models.Model):
 
 class ConfirmationCodesModel(models.Model):
     code = models.CharField(max_length=6)
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='sent_codes')
+    email = models.EmailField(default='helloworld@gmail.com')  # Track by email
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user.username}: {self.code}'
+        return f'{self.email}: {self.code}'
 
     class Meta:
         verbose_name = 'Confirmation Code'
         verbose_name_plural = 'Confirmation Codes'
         constraints = [
-            models.UniqueConstraint(fields=['code', 'user'], name='unique_code_per_user')
+            models.UniqueConstraint(fields=['code', 'email'], name='unique_code_per_email')
         ]
+

@@ -16,7 +16,7 @@
     <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="text-2xl font-bold">Shadowing</div>
-            <a href="index.html" class="text-sm font-semibold hover:text-gray-600 transition duration-300">Back to Home</a>
+            <a href="{% url 'home:home' %}" class="text-sm font-semibold hover:text-gray-600 transition duration-300">Back to Home</a>
         </nav>
     </header>
 
@@ -26,16 +26,23 @@
             <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
                 <h1 class="text-3xl font-bold mb-4">Verify Your Email</h1>
 
-                <!-- Message Alerts (Replace with dynamic messages if needed) -->
-                <div class="mb-4 text-center text-sm text-red-600">
-                    <!-- Error or success messages go here -->
+                <!-- Message Alerts -->
+                <div class="mb-4 text-center text-sm">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p class="{% if message.tags == 'error' %}text-red-600{% else %}text-green-600{% endif %}">
+                                {{ message }}
+                            </p>
+                        {% endfor %}
+                    {% endif %}
                 </div>
 
                 <p class="text-gray-600 mb-6">
-                    We’ve sent a verification code to <strong>your-email@example.com</strong>. Enter the code below to verify your email address.
+                    We’ve sent a verification code to <strong>{{ email }}</strong>. Enter the code below to verify your email address.
                 </p>
 
                 <form action="#" method="POST" class="mb-6">
+                    {% csrf_token %}
                     <div class="flex justify-center space-x-2 mb-6">
                         <input type="text" name="code" class="input-field w-full border border-gray-300 p-3 rounded-md" placeholder="Enter verification code" required>
                     </div>
