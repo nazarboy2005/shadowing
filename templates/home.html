@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Shadowing - Master English Pronunciation and Fluency</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
@@ -81,18 +80,17 @@
 
 <body class="font-sans text-gray-800 antialiased">
 
-    <!-- Header for Registered Users (Logged In) -->
     {% if user.is_authenticated %}
+    <!-- Header for Registered Users (Logged In) -->
     <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="text-2xl font-bold">Shadowing</div>
             <ul class="hidden sm:flex space-x-8 desktop-menu">
                 <li><a href="#features" class="hover:text-gray-600 transition duration-300">Features</a></li>
-                <li><a href="#how-it-works" class="hover:text-gray-600 transition duration-300">How It Works</a></li>
+                <li><a href="{% url 'home:practice' %}" class="hover:text-gray-600 transition duration-300">Practice</a></li>
                 <li><a href="{% url 'home:price_list' %}" class="hover:text-gray-600 transition duration-300">Pricing</a></li>
                 <li><a href="#effectiveness" class="hover:text-gray-600 transition duration-300">Effectiveness</a></li>
                 <li><a href="{% url 'users:profile' %}" class="hover:text-gray-600 transition duration-300">Profile</a></li>
-                <li><a href="{% url 'users:logout' %}" class="hover:text-red-600 transition duration-300">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -103,11 +101,11 @@
             <div class="text-2xl font-bold">Shadowing</div>
             <ul class="hidden sm:flex space-x-8 desktop-menu">
                 <li><a href="#features" class="hover:text-gray-600 transition duration-300">Features</a></li>
-                <li><a href="{% url 'home:practice' %}" class="hover:text-gray-600 transition duration-300">How It Works</a></li>
+                <li><a href="{% url 'home:practice' %}" class="hover:text-gray-600 transition duration-300">Practice</a></li>
                 <li><a href="{% url 'home:price_list' %}" class="hover:text-gray-600 transition duration-300">Pricing</a></li>
                 <li><a href="#effectiveness" class="hover:text-gray-600 transition duration-300">Effectiveness</a></li>
                 <li><a href="{% url 'users:login' %}" class="hover:text-gray-600 transition duration-300">Log In</a></li>
-                <li><a href="{% url 'users:register' %}" class="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition duration-300">Sign Up</a></li>
+                <li><a href="{% url 'users:register' %}" class="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition duration-300">Get Started</a></li>
             </ul>
         </nav>
     </header>

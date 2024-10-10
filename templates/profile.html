@@ -28,7 +28,7 @@
             <!-- Profile Card -->
             <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8">
                 <div class="flex items-center space-x-8 mb-8">
-                    <img class="h-24 w-24 rounded-full border border-gray-200 object-cover" src="https://via.placeholder.com/150" alt="Profile Picture">
+                    <img class="h-24 w-24 rounded-full border border-gray-200 object-cover" src="{% if user.account.profile_picture %}{{ user.account.profile_picture.url }}{% else %}https://via.placeholder.com/150{% endif %}" alt="Profile Picture">
                     <div>
                         <h2 class="text-2xl font-bold">{{ user.username }}</h2>
                         <p class="text-gray-600">{{ user.email }}</p>
@@ -41,7 +41,7 @@
                     <div>
                         <h3 class="text-xl font-bold mb-4">Account Information</h3>
                         <ul class="space-y-4 text-gray-600">
-                            <li><strong>Full Name:</strong> {{ user.get_full_name }}</li>
+                            <li><strong>Full Name:</strong> {{ user.account.full_name }}</li>
                             <li><strong>Email:</strong> {{ user.email }}</li>
                             <li><strong>Subscription:</strong> Monthly Plan - $12/month</li>
                             <li><strong>Member Since:</strong> {{ user.date_joined|date:"F Y" }}</li>

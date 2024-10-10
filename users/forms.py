@@ -30,3 +30,23 @@ class AccountModelForm(forms.ModelForm):
     class Meta:
         model = AccountModel
         exclude = ('user',)
+
+
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = AccountModel
+        fields = ['full_name', 'country', 'profile_picture']
+        widgets = {
+            'full_name': forms.TextInput(attrs={
+                'class': 'input-field w-full border border-gray-300 p-3 rounded-md',
+                'placeholder': 'Enter your full name',
+            }),
+            'country': forms.TextInput(attrs={
+                'class': 'input-field w-full border border-gray-300 p-3 rounded-md',
+                'placeholder': 'Enter your country',
+            }),
+            'profile_picture': forms.ClearableFileInput(attrs={
+                'class': 'w-full text-gray-700',
+            }),
+        }

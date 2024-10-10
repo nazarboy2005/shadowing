@@ -1,5 +1,8 @@
 import random
 
+from django.contrib.auth.decorators import login_required
+from .forms import ProfileEditForm
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout, get_user_model, authenticate, login
@@ -32,6 +35,7 @@ def send_confirmation_email(user, code):
     except Exception as e:
         print(f"Error sending email: {e}")
         return False
+
 
 # RegisterView
 class RegisterView(View):
@@ -201,12 +205,21 @@ class LearningView(LoginRequiredMixin, TemplateView):
     login_url = reverse_lazy('users:login')
 
 
-class ProfileEditView(UpdateView):
-    model = AccountModel
-    form_class = AccountModelForm
-    template_name = 'users/profile_edit.html'
-    success_url = reverse_lazy('users:profile')  # Redirect to profile page after editing
 
-    def get_object(self):
-        return AccountModel.objects.get(user=self.request.user)
+@login_required
+def profile_edit(request):
+    account, created = AccountModel.objects.get_or_create(user=request.user)
 
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, request.FILES, instance=account)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('users:profile')
+        else:
+            print(form.errors)  # This will output errors to the console
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = ProfileEditForm(instance=account)
+
+    return render(request, 'profile_edit.html', {'form': form})
