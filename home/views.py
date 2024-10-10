@@ -6,9 +6,10 @@ class HomePageView(TemplateView):
     template_name = 'home.html'
 
 
-class PriceList(TemplateView):
+class PriceList(ListView):
+    # Define your PriceList view here
     template_name = 'price_list.html'
-
+    # Add any necessary model and context data
 
 
 class PracticeView(TemplateView):
@@ -16,3 +17,6 @@ class PracticeView(TemplateView):
 
 class ChooseVideoView(TemplateView):
     template_name = 'choose_video_or_paste_url.html'
+
+def choose_video_or_paste_url(request):
+    return render(request, 'choose_video_or_paste_url.html')
